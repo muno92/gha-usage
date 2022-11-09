@@ -17,6 +17,6 @@ func DecideRange(targetMonth string) (*Range, error) {
 	}
 	return &Range{
 		Start: start,
-		End:   time.Date(start.Year(), start.Month(), 30, 0, 0, 0, 0, time.UTC),
+		End:   time.Date(start.Year(), start.Month()+1, 1, 0, 0, 0, 0, time.UTC).AddDate(0, 0, -1),
 	}, nil
 }
