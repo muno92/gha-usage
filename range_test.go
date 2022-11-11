@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-func TestParse(t *testing.T) {
+func TestDecideRange(t *testing.T) {
 	tests := []struct {
 		name          string
 		targetMonth   string
