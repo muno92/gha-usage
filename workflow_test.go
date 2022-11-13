@@ -17,7 +17,7 @@ func TestFetchWorkflowRuns(t *testing.T) {
 		expectedTotalCount int
 	}{
 		{
-			name:  "Public repo with no token",
+			name:  "Public repo",
 			repo:  "muno92/resharper_inspectcode",
 			token: token,
 			targetRange: Range{
@@ -27,7 +27,7 @@ func TestFetchWorkflowRuns(t *testing.T) {
 			expectedTotalCount: 60,
 		},
 		{
-			name:  "Private repo with token",
+			name:  "Private repo",
 			repo:  "muno92/dummy_private_repo",
 			token: token,
 			targetRange: Range{
