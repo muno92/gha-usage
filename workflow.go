@@ -24,6 +24,10 @@ func FetchWorkflowRun(repo string, token string, targetRange Range) (*WorkflowRu
 
 	body, err := io.ReadAll(resp.Body)
 
+	if err != nil {
+		return nil, err
+	}
+
 	w := WorkflowRun{}
 
 	if err := json.Unmarshal(body, &w); err != nil {
