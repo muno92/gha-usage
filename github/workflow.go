@@ -1,4 +1,4 @@
-package github_actions_usage_calculator
+package github
 
 import (
 	"encoding/json"
