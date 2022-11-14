@@ -6,15 +6,22 @@ import (
 )
 
 type WorkflowRun struct {
-	TotalCount int `json:"total_count"`
+	JobsUrl string `json:"jobs_url"`
 }
 
-func FetchWorkflowRun(repo string, client Client, targetRange Range) (*WorkflowRun, error) {
+type WorkflowRuns struct {
+	TotalCount   int           `json:"total_count"`
+	WorkflowRuns []WorkflowRun `json:"workflow_runs"`
+}
+
+func FetchWorkflowRuns(repo string, client Client, targetRange Range, perPage int, page int) (*WorkflowRuns, error) {
 	url := fmt.Sprintf(
-		"https://api.github.com/repos/%s/actions/runs?created=%s..%s",
+		"https://api.github.com/repos/%s/actions/runs?created=%s..%s&per_page=%d&page=%d",
 		repo,
 		targetRange.Start.Format("2006-01-02"),
 		targetRange.End.Format("2006-01-02"),
+		perPage,
+		page,
 	)
 
 	body, err := client.Get(url)
@@ -22,7 +29,7 @@ func FetchWorkflowRun(repo string, client Client, targetRange Range) (*WorkflowR
 		return nil, err
 	}
 
-	w := WorkflowRun{}
+	w := WorkflowRuns{}
 	if err := json.Unmarshal(body, &w); err != nil {
 		return nil, err
 	}
