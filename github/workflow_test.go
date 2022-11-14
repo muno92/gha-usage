@@ -68,7 +68,7 @@ func TestFetchWorkflowRuns(t *testing.T) {
 				t.Errorf("Expected total count is %v, but got %v.", tt.expectedTotalCount, workflowRuns.TotalCount)
 			}
 			if len(workflowRuns.WorkflowRuns) != tt.expectedWorkflowRunCount {
-				t.Errorf("Expected job count is %v, but got %v.", tt.expectedWorkflowRunCount, len(workflowRuns.WorkflowRuns))
+				t.Errorf("Expected workflow run count is %v, but got %v.", tt.expectedWorkflowRunCount, len(workflowRuns.WorkflowRuns))
 			}
 		})
 	}
