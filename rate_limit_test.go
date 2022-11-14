@@ -6,9 +6,9 @@ import (
 )
 
 func TestFetchRateLimit(t *testing.T) {
-	token := os.Getenv("GITHUB_TOKEN")
+	client := Client{Token: os.Getenv("GITHUB_TOKEN")}
 
-	rateLimit, err := FetchRateLimit(token)
+	rateLimit, err := FetchRateLimit(client)
 
 	if err != nil {
 		panic(err)

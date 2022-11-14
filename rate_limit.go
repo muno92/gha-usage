@@ -1,11 +1,7 @@
 package github_actions_usage_calculator
 
 import (
-	"context"
 	"encoding/json"
-	"fmt"
-	"io"
-	"net/http"
 )
 
 type RateLimit struct {
@@ -27,26 +23,8 @@ type RateLimits struct {
 	Rate RateLimit
 }
 
-func FetchRateLimit(token string) (*RateLimits, error) {
-	client := &http.Client{}
-
-	ctx := context.Background()
-	req, err := http.NewRequestWithContext(ctx, "GET", "https://api.github.com/rate_limit", nil)
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", token))
-
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("StatusCode: %d", resp.StatusCode)
-	}
-
-	body, err := io.ReadAll(resp.Body)
+func FetchRateLimit(client Client) (*RateLimits, error) {
+	body, err := client.Get("https://api.github.com/rate_limit")
 	if err != nil {
 		return nil, err
 	}
