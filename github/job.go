@@ -60,6 +60,14 @@ func FetchUsage(client Client, jobsUrl string) (Usage, error) {
 func (j JobRuns) Usage() Usage {
 	u := Usage{}
 	for _, job := range j.Jobs {
+		if job.RunnerType() == Windows {
+			u.Windows += job.Usage()
+			continue
+		}
+		if job.RunnerType() == Mac {
+			u.Mac += job.Usage()
+			continue
+		}
 		u.Linux += job.Usage()
 	}
 

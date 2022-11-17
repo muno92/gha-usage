@@ -22,6 +22,15 @@ func TestFetchJobUsage(t *testing.T) {
 				Mac:     0,
 			},
 		},
+		{
+			name:    "multi job",
+			jobsUrl: "https://api.github.com/repos/muno92/resharper_inspectcode/actions/runs/3370110771/jobs",
+			expectedUsage: Usage{
+				Linux:   287,
+				Windows: 622,
+				Mac:     284,
+			},
+		},
 	}
 
 	for _, tt := range tests {
