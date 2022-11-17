@@ -1,13 +1,12 @@
-package github_actions_usage_calculator
+package github
 
 import (
-	"github_actions_usage_calculator/github"
 	"os"
 	"testing"
 )
 
 func TestFetchJobUsage(t *testing.T) {
-	client := github.Client{Token: os.Getenv("GITHUB_TOKEN")}
+	client := Client{Token: os.Getenv("GITHUB_TOKEN")}
 
 	tests := []struct {
 		name          string
