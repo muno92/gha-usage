@@ -16,6 +16,14 @@ type Job struct {
 	Labels      []string
 }
 
+type RunnerType int
+
+const (
+	Linux RunnerType = iota + 1
+	Windows
+	Mac
+)
+
 // Usage has each OS GitHub Actions runner execution time in seconds
 type Usage struct {
 	// Order by cost
@@ -59,4 +67,47 @@ func (j JobRuns) Usage() Usage {
 
 func (j Job) Usage() int64 {
 	return int64(j.CompletedAt.Sub(j.StartedAt).Seconds())
+}
+
+func (j Job) RunnerType() RunnerType {
+	for _, l := range j.Labels {
+		if IsWindowsRunner(l) {
+			return Windows
+		}
+		if IsMacRunner(l) {
+			return Mac
+		}
+	}
+	return Linux
+}
+
+func IsWindowsRunner(label string) bool {
+	if label == "windows-latest" {
+		return true
+	}
+	if label == "windows-2022" {
+		return true
+	}
+	if label == "windows-2019" {
+		return true
+	}
+	return false
+}
+
+func IsMacRunner(label string) bool {
+	if label == "macos-latest" {
+		return true
+	}
+	if label == "macos-12" {
+		return true
+	}
+	if label == "macos-11" {
+		return true
+	}
+	// Deprecated
+	if label == "macos-10.15" {
+		return true
+	}
+
+	return false
 }
