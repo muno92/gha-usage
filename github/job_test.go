@@ -70,6 +70,11 @@ func TestJobRunnerType(t *testing.T) {
 			expectedRunnerType: Linux,
 		},
 		{
+			name:               "Windows-latest",
+			job:                Job{Labels: []string{"Windows-latest"}},
+			expectedRunnerType: Windows,
+		},
+		{
 			name:               "windows-latest",
 			job:                Job{Labels: []string{"windows-latest"}},
 			expectedRunnerType: Windows,
@@ -87,6 +92,11 @@ func TestJobRunnerType(t *testing.T) {
 		{
 			name:               "macos-latest",
 			job:                Job{Labels: []string{"macos-latest"}},
+			expectedRunnerType: Mac,
+		},
+		{
+			name:               "macOS-latest",
+			job:                Job{Labels: []string{"macOS-latest"}},
 			expectedRunnerType: Mac,
 		},
 		{

@@ -2,6 +2,7 @@ package github
 
 import (
 	"encoding/json"
+	"strings"
 	"time"
 )
 
@@ -71,10 +72,11 @@ func (j Job) Usage() int64 {
 
 func (j Job) RunnerType() RunnerType {
 	for _, l := range j.Labels {
-		if IsWindowsRunner(l) {
+		label := strings.ToLower(l)
+		if IsWindowsRunner(label) {
 			return Windows
 		}
-		if IsMacRunner(l) {
+		if IsMacRunner(label) {
 			return Mac
 		}
 	}
