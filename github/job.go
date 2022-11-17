@@ -45,10 +45,18 @@ func FetchUsage(client Client, jobsUrl string) (Usage, error) {
 		return Usage{}, err
 	}
 
+	return jobRuns.Usage(), nil
+}
+
+func (j JobRuns) Usage() Usage {
 	u := Usage{}
-	for _, job := range jobRuns.Jobs {
-		u.Linux += int64(job.CompletedAt.Sub(job.StartedAt).Seconds())
+	for _, job := range j.Jobs {
+		u.Linux += job.Usage()
 	}
 
-	return u, nil
+	return u
+}
+
+func (j Job) Usage() int64 {
+	return int64(j.CompletedAt.Sub(j.StartedAt).Seconds())
 }
