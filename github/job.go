@@ -118,6 +118,5 @@ func IsMacRunner(label string) bool {
 	if label == "macos-10.15" {
 		return true
 	}
-
 	return false
 }
