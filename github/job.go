@@ -17,6 +17,7 @@ type Job struct {
 	Labels      []string
 }
 
+//go:generate stringer -type=RunnerType
 type RunnerType int
 
 const (
