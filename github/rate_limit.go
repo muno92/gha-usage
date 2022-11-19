@@ -23,16 +23,16 @@ type RateLimits struct {
 	Rate RateLimit
 }
 
-func FetchRateLimit(client Client) (*RateLimits, error) {
+func FetchRateLimit(client Client) (RateLimits, error) {
 	body, err := client.Get("https://api.github.com/rate_limit")
 	if err != nil {
-		return nil, err
+		return RateLimits{}, err
 	}
 
 	r := RateLimits{}
 	if err := json.Unmarshal(body, &r); err != nil {
-		return nil, err
+		return RateLimits{}, err
 	}
 
-	return &r, nil
+	return r, nil
 }

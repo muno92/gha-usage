@@ -14,7 +14,7 @@ type WorkflowRuns struct {
 	WorkflowRuns []WorkflowRun `json:"workflow_runs"`
 }
 
-func FetchWorkflowRuns(repo string, client Client, targetRange Range, perPage int, page int) (*WorkflowRuns, error) {
+func FetchWorkflowRuns(repo string, client Client, targetRange Range, perPage int, page int) (WorkflowRuns, error) {
 	url := fmt.Sprintf(
 		"https://api.github.com/repos/%s/actions/runs?created=%s..%s&per_page=%d&page=%d",
 		repo,
@@ -26,13 +26,13 @@ func FetchWorkflowRuns(repo string, client Client, targetRange Range, perPage in
 
 	body, err := client.Get(url)
 	if err != nil {
-		return nil, err
+		return WorkflowRuns{}, err
 	}
 
 	w := WorkflowRuns{}
 	if err := json.Unmarshal(body, &w); err != nil {
-		return nil, err
+		return WorkflowRuns{}, err
 	}
 
-	return &w, nil
+	return w, nil
 }
