@@ -35,7 +35,7 @@ func Run(repo string, targetMonth string, token string) (github.Usage, error) {
 
 	totalPage := TotalPage(workflowRuns)
 	allWorkflowRuns := make([]github.WorkflowRun, workflowRuns.TotalCount)
-	copy(allWorkflowRuns, workflowRuns.WorkflowRuns)
+	allWorkflowRuns = workflowRuns.WorkflowRuns
 
 	// total_count is over 100
 	if totalPage > 1 {
