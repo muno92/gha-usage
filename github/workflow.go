@@ -3,6 +3,7 @@ package github
 import (
 	"encoding/json"
 	"fmt"
+	"github_actions_usage_calculator/config"
 )
 
 type WorkflowRuns struct {
@@ -19,7 +20,7 @@ func (w WorkflowRun) JobRuns(client Client) (JobRuns, error) {
 		"%s?per_page=%d",
 		w.JobsUrl,
 		// Maybe, job per workflow is under 100
-		100,
+		config.PerPage,
 	))
 	if err != nil {
 		return JobRuns{}, err
