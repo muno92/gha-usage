@@ -35,7 +35,7 @@ func TestIsRunnable(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			rateLimits := github.RateLimits{Resources: github.Resource{Core: github.RateLimit{Remaining: tt.remainingRateLimit}}}
-			workflowRuns := github.WorkflowRuns{WorkflowRuns: make([]github.WorkflowRun, tt.totalWorkflowRuns)}
+			workflowRuns := github.WorkflowRuns{TotalCount: tt.totalWorkflowRuns}
 
 			runnable := IsRunnable(rateLimits, workflowRuns)
 

@@ -7,8 +7,7 @@ import (
 )
 
 func IsRunnable(limits github.RateLimits, runs github.WorkflowRuns) bool {
-	c := len(runs.WorkflowRuns)
-	workflowFetchCount := int(math.Ceil(float64(c) / float64(config.PerPage)))
+	workflowFetchCount := int(math.Ceil(float64(runs.TotalCount) / float64(config.PerPage)))
 
-	return workflowFetchCount+c <= limits.Resources.Core.Remaining
+	return workflowFetchCount+runs.TotalCount <= limits.Resources.Core.Remaining
 }
