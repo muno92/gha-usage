@@ -15,7 +15,12 @@ type WorkflowRun struct {
 }
 
 func (w WorkflowRun) JobRuns(client Client) (JobRuns, error) {
-	body, err := client.Get(w.JobsUrl)
+	body, err := client.Get(fmt.Sprintf(
+		"%s?per_page=%d",
+		w.JobsUrl,
+		// Maybe, job per workflow is under 100
+		100,
+	))
 	if err != nil {
 		return JobRuns{}, err
 	}
