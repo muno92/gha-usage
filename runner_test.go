@@ -2,8 +2,44 @@ package github_actions_usage_calculator
 
 import (
 	"github_actions_usage_calculator/github"
+	"os"
 	"testing"
 )
+
+func TestRun(t *testing.T) {
+	token := os.Getenv("GITHUB_TOKEN")
+
+	tests := []struct {
+		name          string
+		repo          string
+		targetMonth   string
+		expectedUsage github.Usage
+	}{
+		{
+			name:        "2022-01",
+			repo:        "muno92/resharper_inspectcode",
+			targetMonth: "2022-01",
+			expectedUsage: github.Usage{
+				Linux:   7369,
+				Windows: 14430,
+				Mac:     8211,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			usage, err := Run(tt.repo, tt.targetMonth, token)
+			if err != nil {
+				panic(err)
+			}
+
+			if usage != tt.expectedUsage {
+				t.Errorf("Expected usage is %v, got %v", tt.expectedUsage, usage)
+			}
+		})
+	}
+}
 
 func TestIsRunnable(t *testing.T) {
 	tests := []struct {
