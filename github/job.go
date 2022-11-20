@@ -1,7 +1,6 @@
 package github
 
 import (
-	"encoding/json"
 	"strings"
 	"time"
 )
@@ -33,29 +32,6 @@ type Usage struct {
 	Linux   int64
 	Windows int64
 	Mac     int64
-}
-
-func FetchJobRuns(client Client, jobsUrl string) (JobRuns, error) {
-	body, err := client.Get(jobsUrl)
-	if err != nil {
-		return JobRuns{}, err
-	}
-
-	j := JobRuns{}
-	if err := json.Unmarshal(body, &j); err != nil {
-		return JobRuns{}, err
-	}
-
-	return j, nil
-}
-
-func FetchUsage(client Client, jobsUrl string) (Usage, error) {
-	jobRuns, err := FetchJobRuns(client, jobsUrl)
-	if err != nil {
-		return Usage{}, err
-	}
-
-	return jobRuns.Usage(), nil
 }
 
 func (j JobRuns) Usage() Usage {
