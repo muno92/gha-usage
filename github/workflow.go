@@ -5,13 +5,13 @@ import (
 	"fmt"
 )
 
-type WorkflowRun struct {
-	JobsUrl string `json:"jobs_url"`
-}
-
 type WorkflowRuns struct {
 	TotalCount   int           `json:"total_count"`
 	WorkflowRuns []WorkflowRun `json:"workflow_runs"`
+}
+
+type WorkflowRun struct {
+	JobsUrl string `json:"jobs_url"`
 }
 
 func (w WorkflowRun) JobRuns(client Client) (JobRuns, error) {

@@ -4,6 +4,12 @@ import (
 	"encoding/json"
 )
 
+type RateLimits struct {
+	Resources Resource
+	// Deprecated
+	Rate RateLimit
+}
+
 type RateLimit struct {
 	Limit     int
 	Remaining int
@@ -15,12 +21,6 @@ type Resource struct {
 	// Other object (e.g. search) is not needed
 	// https://docs.github.com/en/rest/rate-limit
 	Core RateLimit
-}
-
-type RateLimits struct {
-	Resources Resource
-	// Deprecated
-	Rate RateLimit
 }
 
 func FetchRateLimit(client Client) (RateLimits, error) {
