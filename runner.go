@@ -33,9 +33,13 @@ func Run(repo string, targetMonth string, token string) (github.Usage, error) {
 		)
 	}
 
+	fmt.Printf("Workflow run count: %d\n", workflowRuns.TotalCount)
+
 	totalPage := TotalPage(workflowRuns)
 	allWorkflowRuns := make([]github.WorkflowRun, workflowRuns.TotalCount)
 	allWorkflowRuns = workflowRuns.WorkflowRuns
+
+	fmt.Printf("Complete fetch workflow run with pagination (1/%d)\n", totalPage)
 
 	// total_count is over 100
 	if totalPage > 1 {
@@ -46,15 +50,18 @@ func Run(repo string, targetMonth string, token string) (github.Usage, error) {
 			}
 
 			allWorkflowRuns = append(allWorkflowRuns, w.WorkflowRuns...)
+			fmt.Printf("Complete fetch workflow run with pagination (%d/%d)\n", i, totalPage)
 		}
 	}
 
 	usage := github.Usage{}
-	for _, w := range allWorkflowRuns {
+	for j, w := range allWorkflowRuns {
 		u, err := w.Usage(client)
 		if err != nil {
 			return github.Usage{}, err
 		}
+
+		fmt.Printf("Complete fetch job (%d/%d)\n", j+1, workflowRuns.TotalCount)
 
 		usage.Linux += u.Linux
 		usage.Windows += u.Windows
