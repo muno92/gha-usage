@@ -1,4 +1,4 @@
-package github_actions_usage_calculator
+package runner
 
 import (
 	"github_actions_usage_calculator/github"
