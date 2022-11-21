@@ -54,18 +54,27 @@ func Run(repo string, targetMonth string, token string) (github.Usage, error) {
 		}
 	}
 
+	c := make(chan github.Usage, workflowRuns.TotalCount)
+
 	usage := github.Usage{}
-	for j, w := range allWorkflowRuns {
-		u, err := w.Usage(client)
-		if err != nil {
-			return github.Usage{}, err
-		}
+	for _, w := range allWorkflowRuns {
+		go func(w github.WorkflowRun) {
+			u, err := w.Usage(client)
+			if err != nil {
+				//return github.Usage{}, err
+				panic(err)
+			}
+			c <- u
+		}(w)
+	}
 
-		fmt.Printf("Complete fetch job (%d/%d)\n", j+1, workflowRuns.TotalCount)
-
+	for i := 0; i < workflowRuns.TotalCount; i++ {
+		u := <-c
 		usage.Linux += u.Linux
 		usage.Windows += u.Windows
 		usage.Mac += u.Mac
+
+		fmt.Printf("Complete fetch job (%d/%d)\n", i+1, workflowRuns.TotalCount)
 	}
 
 	return usage, nil
