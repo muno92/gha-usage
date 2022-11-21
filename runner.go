@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github_actions_usage_calculator/config"
 	"github_actions_usage_calculator/github"
+	"log"
 	"math"
 )
 
@@ -61,8 +62,7 @@ func Run(repo string, targetMonth string, token string) (github.Usage, error) {
 		go func(w github.WorkflowRun) {
 			u, err := w.Usage(client)
 			if err != nil {
-				//return github.Usage{}, err
-				panic(err)
+				log.Fatalln(err)
 			}
 			c <- u
 		}(w)
