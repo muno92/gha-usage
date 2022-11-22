@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github_actions_usage_calculator/runner"
+	"github_actions_usage_calculator/cmd"
 	"os"
 )
 
@@ -11,7 +11,7 @@ func main() {
 	targetMonth := os.Args[2]
 	token := os.Getenv("GITHUB_TOKEN")
 
-	usage, err := runner.Run(repo, targetMonth, token)
+	usage, err := cmd.Run(repo, targetMonth, token)
 	if err != nil {
 		panic(err)
 	}
