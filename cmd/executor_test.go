@@ -33,10 +33,10 @@ func TestRun(t *testing.T) {
 			name:                "workflow run count is between 100 and 1000",
 			repo:                "muno92/life_log",
 			startDate:           "2022-03-01",
-			endDate:             "2022-03-14",
+			endDate:             "2022-03-05",
 			expectedErrorExists: false,
 			expectedUsage: github.Usage{
-				Linux:   8835,
+				Linux:   3262,
 				Windows: 0,
 				Mac:     0,
 			},
