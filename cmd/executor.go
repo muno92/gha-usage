@@ -75,8 +75,6 @@ func Run(repo string, startDate string, endDate string, token string) (github.Us
 	}
 
 	uc := make(chan UsageResult)
-
-	usage := github.Usage{}
 	defer close(uc)
 	for _, w := range allWorkflowRuns {
 		go func(w github.WorkflowRun) {
@@ -89,6 +87,7 @@ func Run(repo string, startDate string, endDate string, token string) (github.Us
 		}(w)
 	}
 
+	usage := github.Usage{}
 	for k := 0; k < workflowRuns.TotalCount; k++ {
 		u := <-uc
 		if u.Error != nil {
