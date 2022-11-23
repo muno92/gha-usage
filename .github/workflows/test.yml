@@ -22,6 +22,7 @@ jobs:
   e2e_test:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
       - name: Set Start Date
         run: echo "START_DATE=$(date -d '8 days ago' +'%Y-%m-%d')" >> $GITHUB_ENV
       - name: Set End Date
