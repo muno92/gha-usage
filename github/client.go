@@ -28,7 +28,13 @@ func (c Client) Get(url string) ([]byte, error) {
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("StatusCode: %d, URL: %s", resp.StatusCode, url)
+		header := ""
+		for name, values := range resp.Header {
+			for _, v := range values {
+				header += fmt.Sprintf("%s: %s\n", name, v)
+			}
+		}
+		return nil, fmt.Errorf("StatusCode: %d, URL: %s\n%s", resp.StatusCode, url, header)
 	}
 
 	body, err := io.ReadAll(resp.Body)
