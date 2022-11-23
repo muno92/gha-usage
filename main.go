@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github_actions_usage_calculator/cmd"
 	"os"
 )
@@ -17,8 +16,9 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Printf("%s (%s ~ %s) usage\n", repo, startDate, endDate)
-	fmt.Printf("Linux: %ds\n", usage.Linux)
-	fmt.Printf("Windows: %ds\n", usage.Windows)
-	fmt.Printf("Mac: %ds\n", usage.Mac)
+	printer := cmd.SwitchPrinter()
+	err = printer.Print(repo, startDate, endDate, usage)
+	if err != nil {
+		panic(err)
+	}
 }
