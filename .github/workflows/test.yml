@@ -29,7 +29,7 @@ jobs:
         run: echo "END_DATE=$(date -d '1 days ago' +'%Y-%m-%d')" >> $GITHUB_ENV
       - uses: ./
         with:
-          repo: ${{ github.action_repository }}
+          repo: ${{ github.repository }}
           start-date: ${{ env.START_DATE }}
           end-date: ${{ env.END_DATE }}
         env:
