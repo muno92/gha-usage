@@ -28,7 +28,7 @@ func (c Client) Get(url string) ([]byte, error) {
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("StatusCode: %d", resp.StatusCode)
+		return nil, fmt.Errorf("StatusCode: %d, URL: %s", resp.StatusCode, url)
 	}
 
 	body, err := io.ReadAll(resp.Body)
