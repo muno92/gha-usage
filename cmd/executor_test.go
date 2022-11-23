@@ -51,21 +51,33 @@ func TestIsRunnable(t *testing.T) {
 		runnable           bool
 	}{
 		{
-			name:               "total workflow runs equal to rate limit",
+			name:               "total workflow runs is equal to rate limit",
+			remainingRateLimit: 910,
+			totalWorkflowRuns:  900,
+			runnable:           true,
+		},
+		{
+			name:               "total workflow runs is equal to rate limit and just 1000",
 			remainingRateLimit: 1010,
 			totalWorkflowRuns:  1000,
 			runnable:           true,
 		},
 		{
-			name:               "total workflow runs less than rate limit",
-			remainingRateLimit: 1011,
+			name:               "total workflow runs is equal to rate limit, but over 1000",
+			remainingRateLimit: 1012,
 			totalWorkflowRuns:  1001,
 			runnable:           false,
 		},
 		{
-			name:               "total workflow runs greater than rate limit",
-			remainingRateLimit: 1013,
-			totalWorkflowRuns:  1001,
+			name:               "total workflow runs is less than rate limit",
+			remainingRateLimit: 910,
+			totalWorkflowRuns:  901,
+			runnable:           false,
+		},
+		{
+			name:               "total workflow runs is greater than rate limit",
+			remainingRateLimit: 913,
+			totalWorkflowRuns:  901,
 			runnable:           true,
 		},
 	}
@@ -75,7 +87,7 @@ func TestIsRunnable(t *testing.T) {
 			rateLimits := github.RateLimits{Resources: github.Resource{Core: github.RateLimit{Remaining: tt.remainingRateLimit}}}
 			workflowRuns := github.WorkflowRuns{TotalCount: tt.totalWorkflowRuns}
 
-			runnable := IsRunnable(rateLimits, workflowRuns)
+			runnable, _ := IsRunnable(rateLimits, workflowRuns)
 
 			if runnable != tt.runnable {
 				t.Errorf("Expected %v, got %v", tt.runnable, runnable)

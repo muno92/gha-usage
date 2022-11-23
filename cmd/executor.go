@@ -26,12 +26,9 @@ func Run(repo string, startDate string, endDate string, token string) (github.Us
 		return github.Usage{}, err
 	}
 
-	if !IsRunnable(rateLimit, workflowRuns) {
-		return github.Usage{}, fmt.Errorf(
-			"rate limit remaing (%d) is less than expected fetch count (%d)",
-			rateLimit.Resources.Core.Remaining,
-			ExpectedFetchCount(workflowRuns),
-		)
+	isRunnable, err := IsRunnable(rateLimit, workflowRuns)
+	if !isRunnable {
+		return github.Usage{}, err
 	}
 
 	fmt.Printf("Workflow run count: %d\n", workflowRuns.TotalCount)
@@ -80,7 +77,26 @@ func Run(repo string, startDate string, endDate string, token string) (github.Us
 	return usage, nil
 }
 
-func IsRunnable(limits github.RateLimits, runs github.WorkflowRuns) bool {
+func IsRunnable(limits github.RateLimits, runs github.WorkflowRuns) (bool, error) {
+	if !jobIsAcquirable(runs) {
+		return false, fmt.Errorf(
+			"count of workflow run (%d) must be less than or equal to 1000 (because GitHub API will not return over 1000 records even with pagination)",
+			runs.TotalCount,
+		)
+	}
+
+	return RateLimitIsEnough(limits, runs), fmt.Errorf(
+		"rate limit remaining (%d) is less than expected fetch count (%d)",
+		limits.Resources.Core.Remaining,
+		ExpectedFetchCount(runs),
+	)
+}
+
+func jobIsAcquirable(runs github.WorkflowRuns) bool {
+	return runs.TotalCount <= 1000
+}
+
+func RateLimitIsEnough(limits github.RateLimits, runs github.WorkflowRuns) bool {
 	return ExpectedFetchCount(runs) <= limits.Resources.Core.Remaining
 }
 
