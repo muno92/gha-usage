@@ -41,18 +41,26 @@ func Run(repo string, startDate string, endDate string, token string) (github.Us
 
 	// total_count is over 100
 	if totalPage > 1 {
+		wc := make(chan github.WorkflowRuns)
 		for i := 2; i <= totalPage; i++ {
-			w, err := github.FetchWorkflowRuns(repo, client, targetRange, config.PerPage, i)
-			if err != nil {
-				return github.Usage{}, err
-			}
+			go func(page int, wc chan github.WorkflowRuns) {
+				w, err := github.FetchWorkflowRuns(repo, client, targetRange, config.PerPage, page)
+				if err != nil {
+					log.Fatalln(err)
+				}
+				wc <- w
+			}(i, wc)
+		}
+
+		for j := 2; j <= totalPage; j++ {
+			w := <-wc
 
 			allWorkflowRuns = append(allWorkflowRuns, w.WorkflowRuns...)
-			fmt.Printf("Complete fetch workflow run with pagination (%d/%d)\n", i, totalPage)
+			fmt.Printf("Complete fetch workflow run with pagination (%d/%d)\n", j, totalPage)
 		}
 	}
 
-	c := make(chan github.Usage, workflowRuns.TotalCount)
+	uc := make(chan github.Usage, workflowRuns.TotalCount)
 
 	usage := github.Usage{}
 	for _, w := range allWorkflowRuns {
@@ -61,17 +69,17 @@ func Run(repo string, startDate string, endDate string, token string) (github.Us
 			if err != nil {
 				log.Fatalln(err)
 			}
-			c <- u
+			uc <- u
 		}(w)
 	}
 
-	for i := 0; i < workflowRuns.TotalCount; i++ {
-		u := <-c
+	for k := 0; k < workflowRuns.TotalCount; k++ {
+		u := <-uc
 		usage.Linux += u.Linux
 		usage.Windows += u.Windows
 		usage.Mac += u.Mac
 
-		fmt.Printf("Complete fetch job (%d/%d)\n", i+1, workflowRuns.TotalCount)
+		fmt.Printf("Complete fetch job (%d/%d)\n", k+1, workflowRuns.TotalCount)
 	}
 
 	return usage, nil
