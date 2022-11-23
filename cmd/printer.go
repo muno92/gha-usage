@@ -11,7 +11,7 @@ type Printer interface {
 }
 
 func SwitchPrinter() Printer {
-	if os.Getenv("GITHUB_ACTION") == "true" {
+	if os.Getenv("GITHUB_ACTIONS") == "true" {
 		return GitHubActionsPrinter{}
 	}
 	return CommandLinePrinter{}
