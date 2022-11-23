@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 )
 
 type Client struct {
@@ -28,6 +29,16 @@ func (c Client) Get(url string) ([]byte, error) {
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
+		retryAfter := resp.Header.Get("Retry-After")
+		if retryAfter != "" {
+			retryDuration, err := time.ParseDuration(retryAfter + "s")
+			if err == nil {
+				fmt.Printf("Retry after %v\n", retryDuration)
+				time.Sleep(retryDuration)
+				return c.Get(url)
+			}
+		}
+
 		header := ""
 		for name, values := range resp.Header {
 			for _, v := range values {
