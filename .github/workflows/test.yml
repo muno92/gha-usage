@@ -19,3 +19,17 @@ jobs:
         run: go test ./...
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
+  e2e_test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set Start Date
+        run: echo "START_DATE=$(date -d '8 days ago' +'%Y-%m-%d')" >> $GITHUB_ENV
+      - name: Set End Date
+        run: echo "END_DATE=$(date -d '1 days ago' +'%Y-%m-%d')" >> $GITHUB_ENV
+      - uses: ./
+        with:
+          repo: $GITHUB_ACTION_REPOSITORY
+          start-date: ${{ env.START_DATE }}
+          end-date: ${{ env.END_DATE }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

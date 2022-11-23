@@ -1,0 +1,19 @@
+name: 'GitHub Actions Usage Calculator'
+description: 'Calculating GitHub Actions processing time'
+inputs:
+  repo:
+    description: 'org/repository_name'
+    required: true
+  start-date:
+    description: 'Start date of calculate range'
+    required: true
+  end-date:
+    description: 'End date of calculate range'
+    required: true
+runs:
+  using: docker
+  image: Dockerfile
+  args:
+    - ${{ inputs.repo }}
+    - ${{ inputs.start-date }}
+    - ${{ inputs.end-date }}
