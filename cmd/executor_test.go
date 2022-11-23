@@ -10,30 +10,54 @@ func TestRun(t *testing.T) {
 	token := os.Getenv("GITHUB_TOKEN")
 
 	tests := []struct {
-		name          string
-		repo          string
-		startDate     string
-		endDate       string
-		expectedUsage github.Usage
+		name                string
+		repo                string
+		startDate           string
+		endDate             string
+		expectedErrorExists bool
+		expectedUsage       github.Usage
 	}{
 		{
-			name:      "2022-01",
-			repo:      "muno92/resharper_inspectcode",
-			startDate: "2022-01-01",
-			endDate:   "2022-01-31",
+			name:                "workflow run count is less than 100",
+			repo:                "muno92/resharper_inspectcode",
+			startDate:           "2022-01-01",
+			endDate:             "2022-01-31",
+			expectedErrorExists: false,
 			expectedUsage: github.Usage{
 				Linux:   7369,
 				Windows: 14430,
 				Mac:     8211,
 			},
 		},
+		{
+			name:                "workflow run count is between 100 and 1000",
+			repo:                "muno92/life_log",
+			startDate:           "2022-03-01",
+			endDate:             "2022-03-14",
+			expectedErrorExists: false,
+			expectedUsage: github.Usage{
+				Linux:   8835,
+				Windows: 0,
+				Mac:     0,
+			},
+		},
+		{
+			name:                "workflow run count is more than 1000",
+			repo:                "muno92/life_log",
+			startDate:           "2022-03-01",
+			endDate:             "2022-03-15",
+			expectedErrorExists: true,
+			expectedUsage:       github.Usage{},
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			usage, err := Run(tt.repo, tt.startDate, tt.endDate, token)
-			if err != nil {
-				panic(err)
+
+			errorExists := err != nil
+			if tt.expectedErrorExists != errorExists {
+				t.Errorf("expected error exists is %v, got %v\n%v", tt.expectedErrorExists, errorExists, err)
 			}
 
 			if usage != tt.expectedUsage {
