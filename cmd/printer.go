@@ -48,7 +48,10 @@ func (p GitHubActionsPrinter) Print(repo string, startDate string, endDate strin
 		return err
 	}
 
-	message := fmt.Sprintf("### %s GitHub Action Usage (%s ~ %s)  \n", repo, startDate, endDate)
+	message := "### GitHub Action Usage  \n"
+	message += "#### Repository  \n"
+	message += fmt.Sprintf("%s (from %s to %s)  \n", repo, startDate, endDate)
+	message += "#### Usage time  \n"
 	message += "| Linux | Windows | Mac |\n"
 	message += "| --- | --- | --- |\n"
 	message += fmt.Sprintf("| %s (%ds) | %s (%ds) | %s (%ds) |\n", h.Linux, usage.Linux, h.Windows, usage.Windows, h.Mac, usage.Mac)
