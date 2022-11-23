@@ -1,6 +1,7 @@
 package github
 
 import (
+	"fmt"
 	"strings"
 	"time"
 )
@@ -32,6 +33,41 @@ type Usage struct {
 	Linux   int64
 	Windows int64
 	Mac     int64
+}
+
+func (u Usage) HumanReadable() (HumanReadableUsage, error) {
+	linux, err := ToString(u.Linux)
+	if err != nil {
+		return HumanReadableUsage{}, err
+	}
+	windows, err := ToString(u.Windows)
+	if err != nil {
+		return HumanReadableUsage{}, err
+	}
+	mac, err := ToString(u.Mac)
+	if err != nil {
+		return HumanReadableUsage{}, err
+	}
+
+	return HumanReadableUsage{
+		Linux:   linux,
+		Windows: windows,
+		Mac:     mac,
+	}, nil
+}
+
+func ToString(seconds int64) (string, error) {
+	s, err := time.ParseDuration(fmt.Sprintf("%ds", seconds))
+	if err != nil {
+		return "", err
+	}
+	return s.String(), nil
+}
+
+type HumanReadableUsage struct {
+	Linux   string
+	Windows string
+	Mac     string
 }
 
 func (j JobRuns) Usage() Usage {

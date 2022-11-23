@@ -92,3 +92,24 @@ func TestJobRunnerType(t *testing.T) {
 		})
 	}
 }
+
+func TestHumanReadableUsage(t *testing.T) {
+	usage := Usage{
+		Linux:   59,
+		Windows: 60,
+		Mac:     3600,
+	}
+	expected := HumanReadableUsage{
+		Linux:   "59s",
+		Windows: "1m0s",
+		Mac:     "1h0m0s",
+	}
+
+	actual, err := usage.HumanReadable()
+	if err != nil {
+		panic(err)
+	}
+	if actual != expected {
+		t.Errorf("expected %v, got %v", expected, actual)
+	}
+}
