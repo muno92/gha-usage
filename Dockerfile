@@ -1,9 +1,6 @@
 FROM golang:1.19-bullseye as builder
 WORKDIR /app
 
-COPY go.mod ./
-RUN go mod download
-
 COPY . .
 RUN make
 
