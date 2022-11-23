@@ -53,14 +53,14 @@ func Run(repo string, startDate string, endDate string, token string) (github.Us
 		wc := make(chan WorkflowRunResult)
 		defer close(wc)
 		for i := 2; i <= totalPage; i++ {
-			go func(page int, wc chan WorkflowRunResult) {
+			go func(page int) {
 				w, err := github.FetchWorkflowRuns(repo, client, targetRange, config.PerPage, page)
 				if err != nil {
 					wc <- WorkflowRunResult{WorkflowRuns: github.WorkflowRuns{}, Error: err}
 					return
 				}
 				wc <- WorkflowRunResult{WorkflowRuns: w, Error: nil}
-			}(i, wc)
+			}(i)
 		}
 
 		for j := 2; j <= totalPage; j++ {
