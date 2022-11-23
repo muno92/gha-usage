@@ -19,6 +19,7 @@ func (c Client) Get(url string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+	req.Header.Add("User-Agent", "GitHub Actions Usage Calculator")
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.Token))
 
 	resp, err := client.Do(req)
