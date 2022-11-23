@@ -8,8 +8,8 @@ import (
 	"math"
 )
 
-func Run(repo string, targetMonth string, token string) (github.Usage, error) {
-	targetRange, err := github.DecideRange(targetMonth)
+func Run(repo string, startDate string, endDate string, token string) (github.Usage, error) {
+	targetRange, err := github.NewRange(startDate, endDate)
 	if err != nil {
 		return github.Usage{}, err
 	}

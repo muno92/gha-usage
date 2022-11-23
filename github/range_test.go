@@ -5,69 +5,65 @@ import (
 	"time"
 )
 
-func TestDecideRange(t *testing.T) {
+func TestNewRange(t *testing.T) {
 	tests := []struct {
-		name          string
-		targetMonth   string
-		expectedStart time.Time
-		expectedEnd   time.Time
+		name                string
+		startDate           string
+		endDate             string
+		expectedErrorExists bool
+		expectedRange       Range
 	}{
 		{
-			name:          "Month with 31 days",
-			targetMonth:   "2022-01",
-			expectedStart: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC),
-			expectedEnd:   time.Date(2022, 1, 31, 0, 0, 0, 0, time.UTC),
+			name:                "Valid",
+			startDate:           "2022-01-01",
+			endDate:             "2022-01-31",
+			expectedErrorExists: false,
+			expectedRange: Range{
+				Start: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC),
+				End:   time.Date(2022, 1, 31, 0, 0, 0, 0, time.UTC),
+			},
 		},
 		{
-			name:          "Non leap year February",
-			targetMonth:   "2022-02",
-			expectedStart: time.Date(2022, 2, 1, 0, 0, 0, 0, time.UTC),
-			expectedEnd:   time.Date(2022, 2, 28, 0, 0, 0, 0, time.UTC),
+			name:                "Start Date is invalid format",
+			startDate:           "2022-01",
+			endDate:             "2022-01-31",
+			expectedErrorExists: true,
+			expectedRange:       Range{},
 		},
 		{
-			name:          "Leap year February",
-			targetMonth:   "2024-02",
-			expectedStart: time.Date(2024, 2, 1, 0, 0, 0, 0, time.UTC),
-			expectedEnd:   time.Date(2024, 2, 29, 0, 0, 0, 0, time.UTC),
+			name:                "Start Date is not yyyy-mm-dd",
+			startDate:           "2022/01/01",
+			endDate:             "2022-01-31",
+			expectedErrorExists: true,
+			expectedRange:       Range{},
 		},
 		{
-			name:          "April",
-			targetMonth:   "2022-04",
-			expectedStart: time.Date(2022, 4, 1, 0, 0, 0, 0, time.UTC),
-			expectedEnd:   time.Date(2022, 4, 30, 0, 0, 0, 0, time.UTC),
+			name:                "End Date is invalid format",
+			startDate:           "2022-01-01",
+			endDate:             "test",
+			expectedErrorExists: true,
+			expectedRange:       Range{},
 		},
 		{
-			name:          "June",
-			targetMonth:   "2022-06",
-			expectedStart: time.Date(2022, 6, 1, 0, 0, 0, 0, time.UTC),
-			expectedEnd:   time.Date(2022, 6, 30, 0, 0, 0, 0, time.UTC),
-		},
-		{
-			name:          "September",
-			targetMonth:   "2022-09",
-			expectedStart: time.Date(2022, 9, 1, 0, 0, 0, 0, time.UTC),
-			expectedEnd:   time.Date(2022, 9, 30, 0, 0, 0, 0, time.UTC),
-		},
-		{
-			name:          "November",
-			targetMonth:   "2022-11",
-			expectedStart: time.Date(2022, 11, 1, 0, 0, 0, 0, time.UTC),
-			expectedEnd:   time.Date(2022, 11, 30, 0, 0, 0, 0, time.UTC),
+			name:                "End Date is before start date",
+			startDate:           "2022-01-01",
+			endDate:             "2021-01-31",
+			expectedErrorExists: true,
+			expectedRange:       Range{},
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			targetRange, err := DecideRange(tt.targetMonth)
-			if err != nil {
-				panic(err)
+			targetRange, err := NewRange(tt.startDate, tt.endDate)
+
+			errorExists := err != nil
+			if tt.expectedErrorExists != errorExists {
+				t.Errorf("expected error exists is %v, got %v\n%v", tt.expectedErrorExists, errorExists, err)
 			}
 
-			if targetRange.Start != tt.expectedStart {
-				t.Errorf("expected %v, but got %v", tt.expectedStart, targetRange.Start)
-			}
-			if targetRange.End != tt.expectedEnd {
-				t.Errorf("expected %v, but got %v", tt.expectedEnd, targetRange.End)
+			if targetRange != tt.expectedRange {
+				t.Errorf("expected %v, but got %v", tt.expectedRange, targetRange)
 			}
 		})
 	}

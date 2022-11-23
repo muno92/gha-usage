@@ -12,13 +12,15 @@ func TestRun(t *testing.T) {
 	tests := []struct {
 		name          string
 		repo          string
-		targetMonth   string
+		startDate     string
+		endDate       string
 		expectedUsage github.Usage
 	}{
 		{
-			name:        "2022-01",
-			repo:        "muno92/resharper_inspectcode",
-			targetMonth: "2022-01",
+			name:      "2022-01",
+			repo:      "muno92/resharper_inspectcode",
+			startDate: "2022-01-01",
+			endDate:   "2022-01-31",
 			expectedUsage: github.Usage{
 				Linux:   7369,
 				Windows: 14430,
@@ -29,7 +31,7 @@ func TestRun(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			usage, err := Run(tt.repo, tt.targetMonth, token)
+			usage, err := Run(tt.repo, tt.startDate, tt.endDate, token)
 			if err != nil {
 				panic(err)
 			}
