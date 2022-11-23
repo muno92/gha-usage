@@ -4,9 +4,18 @@ import (
 	"fmt"
 	"github_actions_usage_calculator/config"
 	"github_actions_usage_calculator/github"
-	"log"
 	"math"
 )
+
+type WorkflowRunResult struct {
+	WorkflowRuns github.WorkflowRuns
+	Error        error
+}
+
+type UsageResult struct {
+	Usage github.Usage
+	Error error
+}
 
 func Run(repo string, startDate string, endDate string, token string) (github.Usage, error) {
 	targetRange, err := github.NewRange(startDate, endDate)
@@ -41,43 +50,54 @@ func Run(repo string, startDate string, endDate string, token string) (github.Us
 
 	// total_count is over 100
 	if totalPage > 1 {
-		wc := make(chan github.WorkflowRuns)
+		wc := make(chan WorkflowRunResult)
+		defer close(wc)
 		for i := 2; i <= totalPage; i++ {
-			go func(page int, wc chan github.WorkflowRuns) {
+			go func(page int, wc chan WorkflowRunResult) {
 				w, err := github.FetchWorkflowRuns(repo, client, targetRange, config.PerPage, page)
 				if err != nil {
-					log.Fatalln(err)
+					wc <- WorkflowRunResult{WorkflowRuns: github.WorkflowRuns{}, Error: err}
+					return
 				}
-				wc <- w
+				wc <- WorkflowRunResult{WorkflowRuns: w, Error: nil}
 			}(i, wc)
 		}
 
 		for j := 2; j <= totalPage; j++ {
 			w := <-wc
+			if w.Error != nil {
+				return github.Usage{}, w.Error
+			}
 
-			allWorkflowRuns = append(allWorkflowRuns, w.WorkflowRuns...)
+			allWorkflowRuns = append(allWorkflowRuns, w.WorkflowRuns.WorkflowRuns...)
 			fmt.Printf("Complete fetch workflow run with pagination (%d/%d)\n", j, totalPage)
 		}
 	}
 
-	uc := make(chan github.Usage)
+	uc := make(chan UsageResult)
 
 	usage := github.Usage{}
+	defer close(uc)
 	for _, w := range allWorkflowRuns {
 		go func(w github.WorkflowRun) {
 			u, err := w.Usage(client)
 			if err != nil {
-				log.Fatalln(err)
+				uc <- UsageResult{Usage: github.Usage{}, Error: err}
+				return
 			}
-			uc <- u
+			uc <- UsageResult{Usage: u, Error: nil}
 		}(w)
 	}
 
 	for k := 0; k < workflowRuns.TotalCount; k++ {
 		u := <-uc
-		usage.Linux += u.Linux
-		usage.Windows += u.Windows
-		usage.Mac += u.Mac
+		if u.Error != nil {
+			return github.Usage{}, u.Error
+		}
+
+		usage.Linux += u.Usage.Linux
+		usage.Windows += u.Usage.Windows
+		usage.Mac += u.Usage.Mac
 
 		fmt.Printf("Complete fetch job (%d/%d)\n", k+1, workflowRuns.TotalCount)
 	}
