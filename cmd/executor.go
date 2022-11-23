@@ -51,7 +51,6 @@ func Run(repo string, startDate string, endDate string, token string) (github.Us
 	// total_count is over 100
 	if totalPage > 1 {
 		wc := make(chan WorkflowRunResult)
-		defer close(wc)
 		for i := 2; i <= totalPage; i++ {
 			go func(page int) {
 				w, err := github.FetchWorkflowRuns(repo, client, targetRange, config.PerPage, page)
@@ -75,7 +74,6 @@ func Run(repo string, startDate string, endDate string, token string) (github.Us
 	}
 
 	uc := make(chan UsageResult)
-	defer close(uc)
 	for _, w := range allWorkflowRuns {
 		go func(w github.WorkflowRun) {
 			u, err := w.Usage(client)
