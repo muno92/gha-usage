@@ -1,5 +1,7 @@
 package config
 
 const (
-	PerPage int = 100
+	Name    string = "gha-usage"
+	Version string = "0.1.0"
+	PerPage int    = 100
 )
