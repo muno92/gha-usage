@@ -2,15 +2,14 @@
 
 [![Test](https://github.com/muno92/gha-usage/actions/workflows/test.yml/badge.svg)](https://github.com/muno92/gha-usage/actions/workflows/test.yml)
 
-This tool calculate GitHub Actions usage with specified repository and period.
-
+This tool calculate GitHub Actions usage with specified repository and period.  
 You can choose between GitHub Actions and Command Line to exec this tool.
 
 ## Usage
 
 > **Warning**  
 > This tool can only calculate the usage of less than 1000 workflow runs  
-> (due to GitHub API limitations).
+> (due to GitHub API limitations).  
 > So, please change period by workflow run count.
 
 ![workflow run example](./assets/workflow_runs.png)  
