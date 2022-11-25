@@ -2,7 +2,7 @@ name: 'GitHub Actions Usage Calculator'
 description: 'Calculating GitHub Actions processing time'
 inputs:
   repo:
-    description: 'org/repository_name'
+    description: 'repo-owner/repository-name'
     required: true
   start-date:
     description: 'Start date of calculate range'
