@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"github_actions_usage_calculator/github"
+	"ghausage/github"
 	"os"
 )
 

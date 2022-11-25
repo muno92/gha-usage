@@ -3,7 +3,7 @@ package github
 import (
 	"encoding/json"
 	"fmt"
-	"github_actions_usage_calculator/config"
+	"ghausage/config"
 )
 
 type WorkflowRuns struct {

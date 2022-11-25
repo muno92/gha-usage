@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github_actions_usage_calculator/cmd"
+	"ghausage/cmd"
 	"os"
 )
 

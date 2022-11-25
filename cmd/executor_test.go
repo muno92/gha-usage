@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github_actions_usage_calculator/github"
+	"ghausage/github"
 	"os"
 	"testing"
 )

@@ -1,3 +1,3 @@
-module github_actions_usage_calculator
+module ghausage
 
 go 1.19

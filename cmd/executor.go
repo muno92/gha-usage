@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"fmt"
-	"github_actions_usage_calculator/config"
-	"github_actions_usage_calculator/github"
+	"ghausage/config"
+	"ghausage/github"
 	"math"
 )
 
