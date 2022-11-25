@@ -107,7 +107,7 @@ jobs:
 
 1. Download binary from [release](https://github.com/muno92/gha-usage/releases) page.
 2. Creating a [personal access token](https://docs.github.com/ja/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token).  
-  Token needs no permission, because token is only for avoid [rate limit](https://docs.github.com/en/rest/overview/resources-in-the-rest-api#rate-limiting).
+  When target repository is public, token needs no permission, because token is only for avoid [rate limit](https://docs.github.com/en/rest/overview/resources-in-the-rest-api#rate-limiting).
 3. Exec this tool
    Example)
    ```bash
