@@ -3,9 +3,13 @@ on:
   push:
     branches:
       - master
-    paths-ignore:
-      - '.github/**'
-      - '.tagpr'
+    paths:
+      - '**.go'
+      - .goreleaser.yaml
+      - action.yml
+      - Dockerfile
+      - go.mod
+      - Makefile
 jobs:
   release:
     runs-on: ubuntu-latest
