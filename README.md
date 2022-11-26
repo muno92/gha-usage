@@ -12,10 +12,10 @@ You can choose between GitHub Actions and Command Line to exec this tool.
 
 > **Warning**  
 > This tool can only calculate the usage of less than 1000 workflow runs  
-> (due to GitHub API limitations).  
+> (due to GitHub REST API limitations).  
 > So, please change period by workflow run count.
 
-You can see workflow run count with below command.
+You can see workflow run count with follow command.
 
 ```bash
 curl 'https://api.github.com/repos/REPO_OWNER/REPO_NAME/actions/runs?created=START_DATE..END_DATE' | jq '.total_count'
