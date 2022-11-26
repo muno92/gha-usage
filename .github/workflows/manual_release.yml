@@ -1,0 +1,7 @@
+name: Manual Release
+on: workflow_dispatch
+
+jobs:
+  up-artifact-to-release:
+    uses: ./.github/workflows/goreleaser.yml
+    secrets: inherit
