@@ -31,16 +31,13 @@ From GitHub Actions, this tool output result to Job Summary.
 
 #### Inputs
 
-- repo  
-  **required**  
+- repo (**required**)  
   The name of target repository.  
   example) muno92/gha-usage
-- start-date  
-  **required**  
+- start-date (**required**)  
   Start date of calculation period with format 'yyyy-mm-dd'.  
   example) 2022-01-01
-- end-date  
-  **required**  
+- end-date (**required**)  
   Start date of calculation period with format 'yyyy-mm-dd'.  
   example) 2022-01-31
 
@@ -101,8 +98,7 @@ jobs:
 1. Download binary from [release](https://github.com/muno92/gha-usage/releases) page.
 2. Creating a [personal access token](https://docs.github.com/ja/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token).  
   When target repository is public, token needs no permission, because token is only for avoid [rate limit](https://docs.github.com/en/rest/overview/resources-in-the-rest-api#rate-limiting).
-3. Exec this tool
-   Example)
+3. Exec this tool  
    ```bash
    export GITHUB_TOKEN=YOUR_TOKEN
    ./ghausage REPO START_DATE END_DATE
