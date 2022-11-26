@@ -51,7 +51,7 @@ on:
     - cron:  '5 0 1 * *'
     
 jobs:
-  calc_usage:
+  calc-usage:
     runs-on: ubuntu-latest
     steps:
       - name: Set Start Date
@@ -77,7 +77,7 @@ on:
     - cron:  '5 0 * * 0'
     
 jobs:
-  calc_usage:
+  calc-usage:
     runs-on: ubuntu-latest
     steps:
       - name: Set Start Date
