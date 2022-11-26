@@ -17,3 +17,6 @@ runs:
     - ${{ inputs.repo }}
     - ${{ inputs.start-date }}
     - ${{ inputs.end-date }}
+branding:
+  icon: clock
+  color: blue
