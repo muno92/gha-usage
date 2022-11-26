@@ -3,6 +3,9 @@
 [![Test](https://github.com/muno92/gha-usage/actions/workflows/test.yml/badge.svg)](https://github.com/muno92/gha-usage/actions/workflows/test.yml)
 
 This tool calculate GitHub Actions usage with specified repository and period.  
+
+![sample usage](./assets/sample_usage.gif)
+
 You can choose between GitHub Actions and Command Line to exec this tool.
 
 ## Usage
@@ -12,14 +15,11 @@ You can choose between GitHub Actions and Command Line to exec this tool.
 > (due to GitHub API limitations).  
 > So, please change period by workflow run count.
 
-![workflow run example](./assets/workflow_runs.png)  
-(on workflow result page, each row is 1 workflow run.)
-
 You can see workflow run count with below command.
 
 ```bash
 curl 'https://api.github.com/repos/REPO_OWNER/REPO_NAME/actions/runs?created=START_DATE..END_DATE' | jq '.total_count'
-# e.g.)
+# example)
 curl 'https://api.github.com/repos/muno92/gha-usage/actions/runs?created=2022-11-01..2022-11-30' | jq '.total_count'
 ```
 
@@ -31,25 +31,18 @@ From GitHub Actions, this tool output result to Job Summary.
 
 #### Inputs
 
-##### repo
-
-**required**  
-The name of target repository.  
-e.g.) muno92/gha-usage
-
-##### start-date
-
-**required**
-
-Start date of calculation period with format 'yyyy-mm-dd'.  
-e.g.) 2022-01-01
-
-##### end-date
-
-**required**
-
-Start date of calculation period with format 'yyyy-mm-dd'.  
-e.g.) 2022-01-31
+- repo  
+  **required**  
+  The name of target repository.  
+  example) muno92/gha-usage
+- start-date  
+  **required**  
+  Start date of calculation period with format 'yyyy-mm-dd'.  
+  example) 2022-01-01
+- end-date  
+  **required**  
+  Start date of calculation period with format 'yyyy-mm-dd'.  
+  example) 2022-01-31
 
 #### Example) Get usage of last month
 
@@ -113,6 +106,6 @@ jobs:
    ```bash
    export GITHUB_TOKEN=YOUR_TOKEN
    ./ghausage REPO START_DATE END_DATE
-   # e.g.)
+   # example)
    ./ghausage muno92/gha-usage 2022-11-01 2022-11-30
    ```
