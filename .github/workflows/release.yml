@@ -1,0 +1,24 @@
+name: Release
+on:
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - '.github/**'
+      - '.tagpr'
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    outputs:
+      tagpr-tag: ${{ steps.tagpr.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v3
+      - id: tagpr
+        uses: Songmu/tagpr@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  up-artifact-to-release:
+    needs: release
+    if: needs.release.outputs.tagpr-tag != ''
+    uses: ./.github/workflows/goreleaser.yml
+    secrets: inherit
