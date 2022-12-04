@@ -13,7 +13,7 @@ type RateLimits struct {
 type RateLimit struct {
 	Limit     int
 	Remaining int
-	Reset     int
+	Reset     int64
 	Used      int
 }
 

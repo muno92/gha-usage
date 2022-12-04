@@ -11,7 +11,7 @@ func TestFetchRateLimit(t *testing.T) {
 	rateLimit, err := FetchRateLimit(client)
 
 	if err != nil {
-		panic(err)
+		t.Error(err)
 	}
 
 	if rateLimit.Resources.Core.Limit != 5000 {

@@ -1,9 +1,11 @@
 package cmd
 
 import (
+	"errors"
 	"ghausage/github"
 	"os"
 	"testing"
+	"time"
 )
 
 func TestRun(t *testing.T) {
@@ -73,48 +75,71 @@ func TestIsRunnable(t *testing.T) {
 		remainingRateLimit int
 		totalWorkflowRuns  int
 		runnable           bool
+		expectedError      error
 	}{
 		{
 			name:               "total workflow runs is equal to rate limit",
 			remainingRateLimit: 910,
 			totalWorkflowRuns:  900,
 			runnable:           true,
+			expectedError:      nil,
 		},
 		{
 			name:               "total workflow runs is equal to rate limit and just 1000",
 			remainingRateLimit: 1010,
 			totalWorkflowRuns:  1000,
 			runnable:           true,
+			expectedError:      nil,
 		},
 		{
 			name:               "total workflow runs is equal to rate limit, but over 1000",
 			remainingRateLimit: 1012,
 			totalWorkflowRuns:  1001,
 			runnable:           false,
+			expectedError:      errors.New("count of workflow run (1001) must be less than or equal to 1000 (because GitHub API will not return over 1000 records even with pagination)"),
 		},
 		{
 			name:               "total workflow runs is less than rate limit",
 			remainingRateLimit: 910,
 			totalWorkflowRuns:  901,
 			runnable:           false,
+			expectedError:      errors.New("please try again at 2022-01-23T01:23:45Z, because rate limit remaining (910) is less than expected fetch count (911)"),
 		},
 		{
 			name:               "total workflow runs is greater than rate limit",
 			remainingRateLimit: 913,
 			totalWorkflowRuns:  901,
 			runnable:           true,
+			expectedError:      nil,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			rateLimits := github.RateLimits{Resources: github.Resource{Core: github.RateLimit{Remaining: tt.remainingRateLimit}}}
+
+			resetTime, _ := time.Parse(time.RFC3339, "2022-01-23T01:23:45+00:00")
+			rateLimits := github.RateLimits{
+				Resources: github.Resource{
+					Core: github.RateLimit{
+						Remaining: tt.remainingRateLimit,
+						Reset:     resetTime.UnixMilli(),
+					},
+				},
+			}
 			workflowRuns := github.WorkflowRuns{TotalCount: tt.totalWorkflowRuns}
 
-			runnable, _ := IsRunnable(rateLimits, workflowRuns)
+			runnable, err := IsRunnable(rateLimits, workflowRuns)
 
 			if runnable != tt.runnable {
 				t.Errorf("Expected %v, got %v", tt.runnable, runnable)
+			}
+
+			if tt.runnable {
+				return
+			}
+
+			if err.Error() != tt.expectedError.Error() {
+				t.Errorf("\nExpected error is \n\t%v,\ngot \n\t%v", tt.expectedError, err)
 			}
 		})
 	}
