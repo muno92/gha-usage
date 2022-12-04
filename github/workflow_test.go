@@ -61,7 +61,7 @@ func TestFetchWorkflowRuns(t *testing.T) {
 			workflowRuns, err := FetchWorkflowRuns(tt.repo, client, tt.targetRange, tt.perPage, tt.page)
 
 			if err != nil {
-				panic(err)
+				t.Error(err)
 			}
 
 			if workflowRuns.TotalCount != tt.expectedTotalCount {
@@ -109,7 +109,7 @@ func TestUsage(t *testing.T) {
 
 			usage, err := w.Usage(client)
 			if err != nil {
-				panic(err)
+				t.Error(err)
 			}
 
 			if usage != tt.expectedUsage {

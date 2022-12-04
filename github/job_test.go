@@ -107,7 +107,7 @@ func TestHumanReadableUsage(t *testing.T) {
 
 	actual, err := usage.HumanReadable()
 	if err != nil {
-		panic(err)
+		t.Error(err)
 	}
 	if actual != expected {
 		t.Errorf("expected %v, got %v", expected, actual)
