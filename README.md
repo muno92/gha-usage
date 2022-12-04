@@ -25,7 +25,7 @@ curl 'https://api.github.com/repos/muno92/gha-usage/actions/runs?created=2022-11
 
 ### GitHub Actions
 
-From GitHub Actions, gha-usage output result to Job Summary.
+From GitHub Actions, ghausage output result to Job Summary.
 
 ![job summary example](./assets/job_summary.png)
 
@@ -98,10 +98,10 @@ jobs:
 1. Download binary from [release](https://github.com/muno92/gha-usage/releases) page.
 2. Creating a [personal access token](https://docs.github.com/ja/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token).  
   When target repository is public, token needs no permission, because token is only for avoid [rate limit](https://docs.github.com/en/rest/overview/resources-in-the-rest-api#rate-limiting).
-3. Exec gha-usage  
+3. Exec ghausage  
    ```bash
    export GITHUB_TOKEN=YOUR_TOKEN
-   ./gha-usage REPO START_DATE END_DATE
+   ./ghausage REPO START_DATE END_DATE
    # example)
-   ./gha-usage muno92/gha-usage 2022-11-01 2022-11-30
+   ./ghausage muno92/gha-usage 2022-11-01 2022-11-30
    ```
