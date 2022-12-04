@@ -80,6 +80,16 @@ func TestJobRunnerType(t *testing.T) {
 			job:                Job{Labels: []string{"macos-10.15"}},
 			expectedRunnerType: Mac,
 		},
+		{
+			name:               "self-hosted runner 1",
+			job:                Job{Labels: []string{"self-hosted"}},
+			expectedRunnerType: SelfHosted,
+		},
+		{
+			name:               "self-hosted runner 2",
+			job:                Job{Labels: []string{"my-runner"}},
+			expectedRunnerType: SelfHosted,
+		},
 	}
 
 	for _, tt := range tests {
@@ -95,14 +105,16 @@ func TestJobRunnerType(t *testing.T) {
 
 func TestHumanReadableUsage(t *testing.T) {
 	usage := Usage{
-		Linux:   59,
-		Windows: 60,
-		Mac:     3600,
+		Linux:      59,
+		Windows:    60,
+		Mac:        3600,
+		SelfHosted: 0,
 	}
 	expected := HumanReadableUsage{
-		Linux:   "59s",
-		Windows: "1m0s",
-		Mac:     "1h0m0s",
+		Linux:      "59s",
+		Windows:    "1m0s",
+		Mac:        "1h0m0s",
+		SelfHosted: "0s",
 	}
 
 	actual, err := usage.HumanReadable()

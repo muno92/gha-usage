@@ -30,6 +30,7 @@ func (p CommandLinePrinter) Print(repo string, startDate string, endDate string,
 	fmt.Printf("Linux: %s (%ds)\n", h.Linux, usage.Linux)
 	fmt.Printf("Windows: %s (%ds)\n", h.Windows, usage.Windows)
 	fmt.Printf("Mac: %s (%ds)\n", h.Mac, usage.Mac)
+	fmt.Printf("self-hosted runner: %s (%ds)\n", h.SelfHosted, usage.SelfHosted)
 
 	return nil
 }
@@ -52,9 +53,19 @@ func (p GitHubActionsPrinter) Print(repo string, startDate string, endDate strin
 	message += "#### Repository  \n"
 	message += fmt.Sprintf("%s (from %s to %s)  \n", repo, startDate, endDate)
 	message += "#### Usage time  \n"
-	message += "| Linux | Windows | Mac |\n"
-	message += "| --- | --- | --- |\n"
-	message += fmt.Sprintf("| %s (%ds) | %s (%ds) | %s (%ds) |\n", h.Linux, usage.Linux, h.Windows, usage.Windows, h.Mac, usage.Mac)
+	message += "| Linux | Windows | Mac | self-hosted runner |\n"
+	message += "| --- | --- | --- | --- |\n"
+	message += fmt.Sprintf(
+		"| %s (%ds) | %s (%ds) | %s (%ds) | %s (%ds) |\n",
+		h.Linux,
+		usage.Linux,
+		h.Windows,
+		usage.Windows,
+		h.Mac,
+		usage.Mac,
+		h.SelfHosted,
+		usage.SelfHosted,
+	)
 
 	_, err = fmt.Fprint(f, message)
 	if err != nil {

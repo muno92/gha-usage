@@ -24,15 +24,17 @@ const (
 	Linux RunnerType = iota + 1
 	Windows
 	Mac
+	SelfHosted
 )
 
 // Usage has each OS GitHub Actions runner execution time in seconds
 type Usage struct {
 	// Order by cost
 	// https://docs.github.com/ja/billing/managing-billing-for-github-actions/about-billing-for-github-actions
-	Linux   int64
-	Windows int64
-	Mac     int64
+	Linux      int64
+	Windows    int64
+	Mac        int64
+	SelfHosted int64
 }
 
 func (u Usage) HumanReadable() (HumanReadableUsage, error) {
@@ -48,11 +50,16 @@ func (u Usage) HumanReadable() (HumanReadableUsage, error) {
 	if err != nil {
 		return HumanReadableUsage{}, err
 	}
+	selfHosted, err := ToString(u.SelfHosted)
+	if err != nil {
+		return HumanReadableUsage{}, err
+	}
 
 	return HumanReadableUsage{
-		Linux:   linux,
-		Windows: windows,
-		Mac:     mac,
+		Linux:      linux,
+		Windows:    windows,
+		Mac:        mac,
+		SelfHosted: selfHosted,
 	}, nil
 }
 
@@ -65,9 +72,10 @@ func ToString(seconds int64) (string, error) {
 }
 
 type HumanReadableUsage struct {
-	Linux   string
-	Windows string
-	Mac     string
+	Linux      string
+	Windows    string
+	Mac        string
+	SelfHosted string
 }
 
 func (j JobRuns) Usage() Usage {
@@ -81,7 +89,11 @@ func (j JobRuns) Usage() Usage {
 			u.Mac += job.Usage()
 			continue
 		}
-		u.Linux += job.Usage()
+		if job.RunnerType() == Linux {
+			u.Linux += job.Usage()
+			continue
+		}
+		u.SelfHosted += job.Usage()
 	}
 
 	return u
@@ -94,6 +106,9 @@ func (j Job) Usage() int64 {
 func (j Job) RunnerType() RunnerType {
 	for _, l := range j.Labels {
 		label := strings.ToLower(l)
+		if IsLinuxRunner(label) {
+			return Linux
+		}
 		if IsWindowsRunner(label) {
 			return Windows
 		}
@@ -101,7 +116,23 @@ func (j Job) RunnerType() RunnerType {
 			return Mac
 		}
 	}
-	return Linux
+	return SelfHosted
+}
+
+func IsLinuxRunner(label string) bool {
+	if label == "ubuntu-latest" {
+		return true
+	}
+	if label == "ubuntu-22.04" {
+		return true
+	}
+	if label == "ubuntu-20.04" {
+		return true
+	}
+	if label == "ubuntu-18.04" {
+		return true
+	}
+	return false
 }
 
 func IsWindowsRunner(label string) bool {
