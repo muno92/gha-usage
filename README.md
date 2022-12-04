@@ -101,7 +101,7 @@ jobs:
 3. Exec gha-usage  
    ```bash
    export GITHUB_TOKEN=YOUR_TOKEN
-   ./gha-usage REPO START_DATE END_DATE
+   ./ghausage REPO START_DATE END_DATE
    # example)
-   ./gha-usage muno92/gha-usage 2022-11-01 2022-11-30
+   ./ghausage muno92/gha-usage 2022-11-01 2022-11-30
    ```
