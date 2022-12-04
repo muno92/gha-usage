@@ -87,18 +87,20 @@ func TestUsage(t *testing.T) {
 			name:    "single job",
 			jobsUrl: "https://api.github.com/repos/muno92/resharper_inspectcode/actions/runs/3370110776/jobs",
 			expectedUsage: Usage{
-				Linux:   15,
-				Windows: 0,
-				Mac:     0,
+				Linux:      15,
+				Windows:    0,
+				Mac:        0,
+				SelfHosted: 0,
 			},
 		},
 		{
 			name:    "multi job",
 			jobsUrl: "https://api.github.com/repos/muno92/resharper_inspectcode/actions/runs/3370110771/jobs",
 			expectedUsage: Usage{
-				Linux:   287,
-				Windows: 622,
-				Mac:     284,
+				Linux:      287,
+				Windows:    622,
+				Mac:        284,
+				SelfHosted: 0,
 			},
 		},
 	}

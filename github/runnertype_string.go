@@ -11,11 +11,12 @@ func _() {
 	_ = x[Linux-1]
 	_ = x[Windows-2]
 	_ = x[Mac-3]
+	_ = x[SelfHosted-4]
 }
 
-const _RunnerType_name = "LinuxWindowsMac"
+const _RunnerType_name = "LinuxWindowsMacSelfHosted"
 
-var _RunnerType_index = [...]uint8{0, 5, 12, 15}
+var _RunnerType_index = [...]uint8{0, 5, 12, 15, 25}
 
 func (i RunnerType) String() string {
 	i -= 1
