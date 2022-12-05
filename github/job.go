@@ -15,6 +15,16 @@ type Job struct {
 	StartedAt   time.Time `json:"started_at"`
 	CompletedAt time.Time `json:"completed_at"`
 	Labels      []string
+	Steps       []Step
+}
+
+type Step struct {
+	Name        string
+	Status      string
+	Conclusion  string
+	number      int
+	StartedAt   time.Time `json:"started_at"`
+	CompletedAt time.Time `json:"completed_at"`
 }
 
 //go:generate stringer -type=RunnerType
@@ -100,7 +110,29 @@ func (j JobRuns) Usage() Usage {
 }
 
 func (j Job) Usage() int64 {
+	if j.CompletedAt.IsZero() {
+		stepUsage := j.StepUsage()
+		if stepUsage != 0 {
+			return stepUsage
+		}
+		return 0
+	}
 	return int64(j.CompletedAt.Sub(j.StartedAt).Seconds())
+}
+
+func (j Job) StepUsage() int64 {
+	var u int64
+	for _, step := range j.Steps {
+		u += step.Usage()
+	}
+	return u
+}
+
+func (s Step) Usage() int64 {
+	if s.CompletedAt.IsZero() {
+		return 0
+	}
+	return int64(s.CompletedAt.Sub(s.StartedAt).Seconds())
 }
 
 func (j Job) RunnerType() RunnerType {

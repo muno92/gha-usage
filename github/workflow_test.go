@@ -75,7 +75,7 @@ func TestFetchWorkflowRuns(t *testing.T) {
 
 }
 
-func TestUsage(t *testing.T) {
+func TestWorkflowRunUsage(t *testing.T) {
 	client := Client{Token: os.Getenv("GITHUB_TOKEN")}
 
 	tests := []struct {
