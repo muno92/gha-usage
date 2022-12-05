@@ -2,6 +2,7 @@ package github
 
 import (
 	"testing"
+	"time"
 )
 
 func TestJobRunnerType(t *testing.T) {
@@ -98,6 +99,58 @@ func TestJobRunnerType(t *testing.T) {
 
 			if r != tt.expectedRunnerType {
 				t.Errorf("Expected %v, got %v", tt.expectedRunnerType, r)
+			}
+		})
+	}
+}
+
+func TestJobUsage(t *testing.T) {
+	tests := []struct {
+		name          string
+		job           Job
+		expectedUsage int64
+	}{
+		{
+			name: "job is success",
+			job: Job{
+				StartedAt:   time.Unix(1, 0),
+				CompletedAt: time.Unix(2, 0),
+			},
+			expectedUsage: 1,
+		},
+		{
+			name: "job is still queued",
+			job: Job{
+				StartedAt:   time.Unix(1, 0),
+				CompletedAt: time.Time{},
+			},
+			expectedUsage: 0,
+		},
+		{
+			name: "job is still queued, but all step is completed",
+			job: Job{
+				StartedAt:   time.Unix(1, 0),
+				CompletedAt: time.Time{},
+				Steps: []Step{
+					{
+						StartedAt:   time.Unix(1, 0),
+						CompletedAt: time.Unix(2, 0),
+					},
+					{
+						StartedAt:   time.Unix(3, 0),
+						CompletedAt: time.Unix(5, 0),
+					},
+				},
+			},
+			expectedUsage: 3,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			u := tt.job.Usage()
+			if u != tt.expectedUsage {
+				t.Errorf("expected usage is %v, got %v", tt.expectedUsage, u)
 			}
 		})
 	}
