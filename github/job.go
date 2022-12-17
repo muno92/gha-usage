@@ -2,6 +2,8 @@ package github
 
 import (
 	"fmt"
+	"ghausage/config"
+	"math"
 	"strings"
 	"time"
 )
@@ -45,6 +47,11 @@ type Usage struct {
 	Windows    int64
 	Mac        int64
 	SelfHosted int64
+}
+
+type UsageResult struct {
+	Usage Usage
+	Error error
 }
 
 func (u Usage) HumanReadable() (HumanReadableUsage, error) {
@@ -109,6 +116,10 @@ func (j JobRuns) Usage() Usage {
 	return u
 }
 
+func (j JobRuns) TotalPage() int {
+	return int(math.Ceil(float64(j.TotalCount) / float64(config.PerPage)))
+}
+
 func (j Job) Usage() int64 {
 	if j.CompletedAt.IsZero() {
 		stepUsage := j.StepUsage()
@@ -149,6 +160,15 @@ func (j Job) RunnerType() RunnerType {
 		}
 	}
 	return SelfHosted
+}
+
+func (u Usage) Plus(addend Usage) Usage {
+	return Usage{
+		Linux:      u.Linux + addend.Linux,
+		Windows:    u.Windows + addend.Windows,
+		Mac:        u.Mac + addend.Mac,
+		SelfHosted: u.SelfHosted + addend.SelfHosted,
+	}
 }
 
 func IsLinuxRunner(label string) bool {
