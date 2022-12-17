@@ -88,9 +88,7 @@ func Run(repo string, startDate string, endDate string, token string) (github.Us
 			return github.Usage{}, u.Error
 		}
 
-		usage.Linux += u.Usage.Linux
-		usage.Windows += u.Usage.Windows
-		usage.Mac += u.Usage.Mac
+		usage = usage.Plus(u.Usage)
 
 		fmt.Printf("Complete fetch job (%d/%d)\n", k+1, workflowRuns.TotalCount)
 	}
