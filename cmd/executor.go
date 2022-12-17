@@ -13,11 +13,6 @@ type WorkflowRunResult struct {
 	Error        error
 }
 
-type UsageResult struct {
-	Usage github.Usage
-	Error error
-}
-
 func Run(repo string, startDate string, endDate string, token string) (github.Usage, error) {
 	targetRange, err := github.NewRange(startDate, endDate)
 	if err != nil {
@@ -74,15 +69,15 @@ func Run(repo string, startDate string, endDate string, token string) (github.Us
 		}
 	}
 
-	uc := make(chan UsageResult)
+	uc := make(chan github.UsageResult)
 	for _, w := range allWorkflowRuns {
 		go func(w github.WorkflowRun) {
 			u, err := w.Usage(client)
 			if err != nil {
-				uc <- UsageResult{Usage: github.Usage{}, Error: err}
+				uc <- github.UsageResult{Usage: github.Usage{}, Error: err}
 				return
 			}
-			uc <- UsageResult{Usage: u, Error: nil}
+			uc <- github.UsageResult{Usage: u, Error: nil}
 		}(w)
 	}
 

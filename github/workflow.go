@@ -15,12 +15,13 @@ type WorkflowRun struct {
 	JobsUrl string `json:"jobs_url"`
 }
 
-func (w WorkflowRun) JobRuns(client Client) (JobRuns, error) {
+func (w WorkflowRun) JobRuns(client Client, page int) (JobRuns, error) {
 	body, err := client.Get(fmt.Sprintf(
-		"%s?per_page=%d",
+		"%s?per_page=%d&page=%d",
 		w.JobsUrl,
 		// Maybe, job per workflow is under 100
 		config.PerPage,
+		page,
 	))
 	if err != nil {
 		return JobRuns{}, err
@@ -35,12 +36,39 @@ func (w WorkflowRun) JobRuns(client Client) (JobRuns, error) {
 }
 
 func (w WorkflowRun) Usage(client Client) (Usage, error) {
-	jobRuns, err := w.JobRuns(client)
+	jobRuns, err := w.JobRuns(client, 1)
 	if err != nil {
 		return Usage{}, err
 	}
 
-	return jobRuns.Usage(), nil
+	u := jobRuns.Usage()
+
+	totalPage := jobRuns.TotalPage()
+
+	if totalPage > 1 {
+		uc := make(chan UsageResult)
+		for i := 2; i <= totalPage; i++ {
+			go func(page int) {
+				jobRuns, err := w.JobRuns(client, page)
+				if err != nil {
+					uc <- UsageResult{Usage: Usage{}, Error: err}
+					return
+				}
+				uc <- UsageResult{Usage: jobRuns.Usage(), Error: nil}
+			}(i)
+		}
+
+		for j := 2; j <= totalPage; j++ {
+			result := <-uc
+			if result.Error != nil {
+				return Usage{}, result.Error
+			}
+
+			u = u.Plus(result.Usage)
+		}
+	}
+
+	return u, nil
 }
 
 func FetchWorkflowRuns(repo string, client Client, targetRange Range, perPage int, page int) (WorkflowRuns, error) {
