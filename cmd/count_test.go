@@ -42,11 +42,11 @@ func TestCountCommand(t *testing.T) {
 				t.Error(err)
 			}
 
-			expected := fmt.Sprintf("%s workflow count (from %s to %s): %d", tt.repo, tt.startDate, tt.endDate, tt.expectedCount)
+			expected := fmt.Sprintf("%s workflow run count (from %s to %s): %d", tt.repo, tt.startDate, tt.endDate, tt.expectedCount)
 			actual := stdout.String()
 
 			if actual != expected {
-				t.Errorf("Expected message is\n\t%v,\ngot\n\t%v", tt.expectedCount, actual)
+				t.Errorf("Expected message is\n\t%v,\ngot\n\t%v", expected, actual)
 			}
 		})
 	}
