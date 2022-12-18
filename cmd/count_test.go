@@ -42,7 +42,7 @@ func TestCountCommand(t *testing.T) {
 				t.Error(err)
 			}
 
-			expected := fmt.Sprintf("%s workflow run count (from %s to %s): %d", tt.repo, tt.startDate, tt.endDate, tt.expectedCount)
+			expected := fmt.Sprintf("%s workflow run count (from %s to %s): %d\n", tt.repo, tt.startDate, tt.endDate, tt.expectedCount)
 			actual := stdout.String()
 
 			if actual != expected {
