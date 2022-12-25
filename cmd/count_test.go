@@ -3,6 +3,7 @@ package cmd
 import (
 	"bytes"
 	"fmt"
+	"log"
 	"os"
 	"testing"
 )
@@ -37,7 +38,7 @@ func TestCountCommand(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			stdout := new(bytes.Buffer)
 
-			err := CountCommand{}.Run(stdout, tt.repo, tt.startDate, tt.endDate, token)
+			err := CountCommand{Logger: log.Default()}.Run(stdout, tt.repo, tt.startDate, tt.endDate, token)
 			if err != nil {
 				t.Error(err)
 			}

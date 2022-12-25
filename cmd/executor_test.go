@@ -3,6 +3,7 @@ package cmd
 import (
 	"errors"
 	"ghausage/github"
+	"log"
 	"os"
 	"testing"
 	"time"
@@ -55,7 +56,7 @@ func TestRun(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			usage, err := Run(tt.repo, tt.startDate, tt.endDate, token)
+			usage, err := Run(tt.repo, tt.startDate, tt.endDate, token, log.Default())
 
 			errorExists := err != nil
 			if tt.expectedErrorExists != errorExists {

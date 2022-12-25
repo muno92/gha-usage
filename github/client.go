@@ -4,12 +4,14 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"time"
 )
 
 type Client struct {
-	Token string
+	Token  string
+	Logger *log.Logger
 }
 
 func (c Client) Get(url string) ([]byte, error) {
@@ -33,7 +35,7 @@ func (c Client) Get(url string) ([]byte, error) {
 		if retryAfter != "" {
 			retryDuration, err := time.ParseDuration(retryAfter + "s")
 			if err == nil {
-				fmt.Printf("Retry after %v\n", retryDuration)
+				c.Logger.Printf("Retry after %v\n", retryDuration)
 				time.Sleep(retryDuration)
 				return c.Get(url)
 			}

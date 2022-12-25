@@ -5,9 +5,11 @@ import (
 	"ghausage/config"
 	"ghausage/github"
 	"io"
+	"log"
 )
 
 type CountCommand struct {
+	Logger *log.Logger
 }
 
 func (c CountCommand) Run(stdout io.Writer, repo string, startDate string, endDate string, token string) error {
@@ -16,7 +18,7 @@ func (c CountCommand) Run(stdout io.Writer, repo string, startDate string, endDa
 		return err
 	}
 
-	client := github.Client{Token: token}
+	client := github.Client{Token: token, Logger: c.Logger}
 
 	w, err := github.FetchWorkflowRuns(repo, client, r, config.PerPage, 1)
 	if err != nil {

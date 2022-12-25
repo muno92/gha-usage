@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"ghausage/cmd"
+	"log"
 	"os"
 )
 
@@ -42,7 +43,7 @@ func main() {
 			os.Exit(1)
 		}
 
-		err = cmd.CountCommand{}.Run(os.Stdout, repo, startDate, endDate, token)
+		err = cmd.CountCommand{Logger: log.Default()}.Run(os.Stdout, repo, startDate, endDate, token)
 		if err != nil {
 			panic(err)
 		}
@@ -54,7 +55,7 @@ func main() {
 	startDate := os.Args[2]
 	endDate := os.Args[3]
 
-	usage, err := cmd.Run(repo, startDate, endDate, token)
+	usage, err := cmd.Run(repo, startDate, endDate, token, log.Default())
 	if err != nil {
 		panic(err)
 	}
