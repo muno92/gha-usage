@@ -3,11 +3,12 @@ package cmd
 import (
 	"fmt"
 	"ghausage/github"
+	"io"
 	"os"
 )
 
 type Printer interface {
-	Print(repo string, startDate string, endDate string, usage github.Usage) error
+	Print(stdout io.Writer, repo string, startDate string, endDate string, usage github.Usage) error
 }
 
 func SwitchPrinter() Printer {
@@ -20,17 +21,22 @@ func SwitchPrinter() Printer {
 type CommandLinePrinter struct {
 }
 
-func (p CommandLinePrinter) Print(repo string, startDate string, endDate string, usage github.Usage) error {
+func (p CommandLinePrinter) Print(stdout io.Writer, repo string, startDate string, endDate string, usage github.Usage) error {
 	h, err := usage.HumanReadable()
 	if err != nil {
 		return err
 	}
 
-	fmt.Printf("%s (%s ~ %s) usage\n", repo, startDate, endDate)
-	fmt.Printf("Linux: %s (%ds)\n", h.Linux, usage.Linux)
-	fmt.Printf("Windows: %s (%ds)\n", h.Windows, usage.Windows)
-	fmt.Printf("Mac: %s (%ds)\n", h.Mac, usage.Mac)
-	fmt.Printf("self-hosted runner: %s (%ds)\n", h.SelfHosted, usage.SelfHosted)
+	message := fmt.Sprintf("%s (%s ~ %s) usage\n", repo, startDate, endDate)
+	message += fmt.Sprintf("Linux: %s (%ds)\n", h.Linux, usage.Linux)
+	message += fmt.Sprintf("Windows: %s (%ds)\n", h.Windows, usage.Windows)
+	message += fmt.Sprintf("Mac: %s (%ds)\n", h.Mac, usage.Mac)
+	message += fmt.Sprintf("self-hosted runner: %s (%ds)\n", h.SelfHosted, usage.SelfHosted)
+
+	_, err = fmt.Fprint(stdout, message)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -38,7 +44,7 @@ func (p CommandLinePrinter) Print(repo string, startDate string, endDate string,
 type GitHubActionsPrinter struct {
 }
 
-func (p GitHubActionsPrinter) Print(repo string, startDate string, endDate string, usage github.Usage) error {
+func (p GitHubActionsPrinter) Print(stdout io.Writer, repo string, startDate string, endDate string, usage github.Usage) error {
 	h, err := usage.HumanReadable()
 	if err != nil {
 		return err

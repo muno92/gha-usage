@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"ghausage/config"
 	"ghausage/github"
+	"io"
 	"log"
 	"math"
 	"time"
@@ -14,7 +15,26 @@ type WorkflowRunResult struct {
 	Error        error
 }
 
-func Run(repo string, startDate string, endDate string, token string, logger *log.Logger) (github.Usage, error) {
+type SumCommand struct {
+	Logger *log.Logger
+}
+
+func (s SumCommand) Run(stdout io.Writer, repo string, startDate string, endDate string, token string) error {
+	usage, err := SumUsage(repo, startDate, endDate, token, s.Logger)
+	if err != nil {
+		return err
+	}
+
+	printer := SwitchPrinter()
+	err = printer.Print(stdout, repo, startDate, endDate, usage)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func SumUsage(repo string, startDate string, endDate string, token string, logger *log.Logger) (github.Usage, error) {
 	targetRange, err := github.NewRange(startDate, endDate)
 	if err != nil {
 		return github.Usage{}, err

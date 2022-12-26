@@ -55,13 +55,7 @@ func main() {
 	startDate := os.Args[2]
 	endDate := os.Args[3]
 
-	usage, err := cmd.Run(repo, startDate, endDate, token, log.Default())
-	if err != nil {
-		panic(err)
-	}
-
-	printer := cmd.SwitchPrinter()
-	err = printer.Print(repo, startDate, endDate, usage)
+	err := cmd.SumCommand{Logger: log.Default()}.Run(os.Stdout, repo, startDate, endDate, token)
 	if err != nil {
 		panic(err)
 	}
