@@ -7,24 +7,49 @@ import (
 	"os"
 )
 
-type Printer interface {
-	Print(stdout io.Writer, repo string, startDate string, endDate string, usage github.Usage) error
+type Reporter interface {
+	Report(repo string, startDate string, endDate string, usage github.Usage) (string, error)
 }
 
-func SwitchPrinter() Printer {
-	if os.Getenv("GITHUB_ACTIONS") == "true" {
-		return GitHubActionsPrinter{}
+type Printer struct {
+	reporter Reporter
+	output   io.Writer
+}
+
+func NewPrinter(stdout io.Writer) (Printer, error) {
+	if os.Getenv("GITHUB_ACTIONS") != "true" {
+		return Printer{CommandLineReporter{}, stdout}, nil
 	}
-	return CommandLinePrinter{}
+
+	f, err := os.OpenFile(os.Getenv("GITHUB_STEP_SUMMARY"), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		return Printer{}, err
+	}
+
+	return Printer{GitHubActionsReporter{}, f}, nil
 }
 
-type CommandLinePrinter struct {
-}
-
-func (p CommandLinePrinter) Print(stdout io.Writer, repo string, startDate string, endDate string, usage github.Usage) error {
-	h, err := usage.HumanReadable()
+func (p Printer) Print(repo string, startDate string, endDate string, usage github.Usage) error {
+	r, err := p.reporter.Report(repo, startDate, endDate, usage)
 	if err != nil {
 		return err
+	}
+
+	_, err = fmt.Fprint(p.output, r)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+type CommandLineReporter struct {
+}
+
+func (p CommandLineReporter) Report(repo string, startDate string, endDate string, usage github.Usage) (string, error) {
+	h, err := usage.HumanReadable()
+	if err != nil {
+		return "", err
 	}
 
 	message := fmt.Sprintf("%s (%s ~ %s) usage\n", repo, startDate, endDate)
@@ -33,26 +58,16 @@ func (p CommandLinePrinter) Print(stdout io.Writer, repo string, startDate strin
 	message += fmt.Sprintf("Mac: %s (%ds)\n", h.Mac, usage.Mac)
 	message += fmt.Sprintf("self-hosted runner: %s (%ds)\n", h.SelfHosted, usage.SelfHosted)
 
-	_, err = fmt.Fprint(stdout, message)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return message, nil
 }
 
-type GitHubActionsPrinter struct {
+type GitHubActionsReporter struct {
 }
 
-func (p GitHubActionsPrinter) Print(stdout io.Writer, repo string, startDate string, endDate string, usage github.Usage) error {
+func (p GitHubActionsReporter) Report(repo string, startDate string, endDate string, usage github.Usage) (string, error) {
 	h, err := usage.HumanReadable()
 	if err != nil {
-		return err
-	}
-
-	f, err := os.OpenFile(os.Getenv("GITHUB_STEP_SUMMARY"), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		return err
+		return "", err
 	}
 
 	message := "### GitHub Action Usage  \n"
@@ -73,9 +88,5 @@ func (p GitHubActionsPrinter) Print(stdout io.Writer, repo string, startDate str
 		usage.SelfHosted,
 	)
 
-	_, err = fmt.Fprint(f, message)
-	if err != nil {
-		return err
-	}
-	return nil
+	return message, nil
 }

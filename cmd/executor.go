@@ -25,8 +25,12 @@ func (s SumCommand) Run(stdout io.Writer, repo string, startDate string, endDate
 		return err
 	}
 
-	printer := SwitchPrinter()
-	err = printer.Print(stdout, repo, startDate, endDate, usage)
+	printer, err := NewPrinter(stdout)
+	if err != nil {
+		return err
+	}
+
+	err = printer.Print(repo, startDate, endDate, usage)
 	if err != nil {
 		return err
 	}
