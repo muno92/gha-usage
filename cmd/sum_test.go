@@ -197,6 +197,8 @@ func TestSumCommand(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			stdout := new(bytes.Buffer)
 
+			t.Setenv("GITHUB_ACTIONS", "false")
+
 			err := SumCommand{Logger: log.Default()}.Run(stdout, tt.repo, tt.startDate, tt.endDate, token)
 			errorExists := err != nil
 			if tt.expectedErrorExists != errorExists {
