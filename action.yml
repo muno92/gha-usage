@@ -14,9 +14,9 @@ runs:
   using: docker
   image: Dockerfile
   args:
-    - ${{ inputs.repo }}
-    - ${{ inputs.start-date }}
-    - ${{ inputs.end-date }}
+    - --repo ${{ inputs.repo }}
+    - --start ${{ inputs.start-date }}
+    - --end ${{ inputs.end-date }}
 branding:
   icon: clock
   color: blue
