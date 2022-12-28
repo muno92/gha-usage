@@ -5,7 +5,6 @@ import (
 	"ghausage/cmd"
 	"log"
 	"os"
-	"strings"
 )
 
 var v bool
@@ -41,8 +40,6 @@ func main() {
 		cmd.PrintVersion()
 		return
 	}
-
-	println(strings.Join(os.Args, ","))
 
 	token := os.Getenv("GITHUB_TOKEN")
 
