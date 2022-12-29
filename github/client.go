@@ -16,7 +16,13 @@ type Client struct {
 }
 
 func NewClient(token string, logger *log.Logger) Client {
-	client := &http.Client{}
+	t := http.DefaultTransport.(*http.Transport).Clone()
+	// GitHub API pagination limit is total 1000
+	t.MaxIdleConns = 1000
+	// This client only sends requests to GitHub
+	t.MaxIdleConnsPerHost = 1000
+
+	client := &http.Client{Transport: t}
 
 	return Client{token, logger, client}
 }
