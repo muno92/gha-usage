@@ -10,6 +10,7 @@ on:
       - Dockerfile
       - go.mod
       - Makefile
+      - CHANGELOG.md
 jobs:
   release:
     runs-on: ubuntu-latest
