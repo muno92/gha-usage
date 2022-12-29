@@ -18,9 +18,9 @@ You can choose between GitHub Actions and Command Line to exec this tool.
 You can see workflow run count with follow command.
 
 ```bash
-curl 'https://api.github.com/repos/REPO_OWNER/REPO_NAME/actions/runs?created=START_DATE..END_DATE' | jq '.total_count'
+./ghausage count --repo REPO --start START_DATE --end END_DATE
 # example)
-curl 'https://api.github.com/repos/muno92/gha-usage/actions/runs?created=2022-11-01..2022-11-30' | jq '.total_count'
+./ghausage count --repo muno92/gha-usage --start 2022-11-01 --end 2022-11-30
 ```
 
 ### GitHub Actions
@@ -31,6 +31,8 @@ From GitHub Actions, gha-usage output result to Job Summary.
 
 #### Inputs
 
+- sub-command  
+  Subcommand of ghausage. \[ sum | count ]
 - repo (**required**)  
   The name of target repository.  
   example) muno92/gha-usage
@@ -101,7 +103,7 @@ jobs:
 3. Exec gha-usage  
    ```bash
    export GITHUB_TOKEN=YOUR_TOKEN
-   ./ghausage REPO START_DATE END_DATE
+   ./ghausage sum --repo REPO --start START_DATE --end END_DATE
    # example)
-   ./ghausage muno92/gha-usage 2022-11-01 2022-11-30
+   ./ghausage sum --repo muno92/gha-usage --start 2022-11-01 --end 2022-11-30
    ```

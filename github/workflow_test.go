@@ -1,13 +1,14 @@
 package github
 
 import (
+	"log"
 	"os"
 	"testing"
 	"time"
 )
 
 func TestFetchWorkflowRuns(t *testing.T) {
-	client := Client{Token: os.Getenv("GITHUB_TOKEN")}
+	client := Client{Token: os.Getenv("GITHUB_TOKEN"), Logger: log.Default()}
 
 	tests := []struct {
 		name                     string
@@ -76,7 +77,7 @@ func TestFetchWorkflowRuns(t *testing.T) {
 }
 
 func TestWorkflowRunUsage(t *testing.T) {
-	client := Client{Token: os.Getenv("GITHUB_TOKEN")}
+	client := Client{Token: os.Getenv("GITHUB_TOKEN"), Logger: log.Default()}
 
 	tests := []struct {
 		name          string

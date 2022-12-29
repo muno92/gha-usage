@@ -3,50 +3,71 @@ package cmd
 import (
 	"fmt"
 	"ghausage/github"
+	"io"
 	"os"
 )
 
-type Printer interface {
-	Print(repo string, startDate string, endDate string, usage github.Usage) error
+type Reporter interface {
+	Report(repo string, startDate string, endDate string, usage github.Usage) (string, error)
 }
 
-func SwitchPrinter() Printer {
-	if os.Getenv("GITHUB_ACTIONS") == "true" {
-		return GitHubActionsPrinter{}
-	}
-	return CommandLinePrinter{}
+type Printer struct {
+	reporter Reporter
+	output   io.Writer
 }
 
-type CommandLinePrinter struct {
-}
-
-func (p CommandLinePrinter) Print(repo string, startDate string, endDate string, usage github.Usage) error {
-	h, err := usage.HumanReadable()
-	if err != nil {
-		return err
-	}
-
-	fmt.Printf("%s (%s ~ %s) usage\n", repo, startDate, endDate)
-	fmt.Printf("Linux: %s (%ds)\n", h.Linux, usage.Linux)
-	fmt.Printf("Windows: %s (%ds)\n", h.Windows, usage.Windows)
-	fmt.Printf("Mac: %s (%ds)\n", h.Mac, usage.Mac)
-	fmt.Printf("self-hosted runner: %s (%ds)\n", h.SelfHosted, usage.SelfHosted)
-
-	return nil
-}
-
-type GitHubActionsPrinter struct {
-}
-
-func (p GitHubActionsPrinter) Print(repo string, startDate string, endDate string, usage github.Usage) error {
-	h, err := usage.HumanReadable()
-	if err != nil {
-		return err
+func NewPrinter(stdout io.Writer) (Printer, error) {
+	if os.Getenv("GITHUB_ACTIONS") != "true" {
+		return Printer{CommandLineReporter{}, stdout}, nil
 	}
 
 	f, err := os.OpenFile(os.Getenv("GITHUB_STEP_SUMMARY"), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
+		return Printer{}, err
+	}
+
+	return Printer{GitHubActionsReporter{}, f}, nil
+}
+
+func (p Printer) Print(repo string, startDate string, endDate string, usage github.Usage) error {
+	r, err := p.reporter.Report(repo, startDate, endDate, usage)
+	if err != nil {
 		return err
+	}
+
+	_, err = fmt.Fprint(p.output, r)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+type CommandLineReporter struct {
+}
+
+func (p CommandLineReporter) Report(repo string, startDate string, endDate string, usage github.Usage) (string, error) {
+	h, err := usage.HumanReadable()
+	if err != nil {
+		return "", err
+	}
+
+	message := fmt.Sprintf("%s (%s ~ %s) usage\n", repo, startDate, endDate)
+	message += fmt.Sprintf("Linux: %s (%ds)\n", h.Linux, usage.Linux)
+	message += fmt.Sprintf("Windows: %s (%ds)\n", h.Windows, usage.Windows)
+	message += fmt.Sprintf("Mac: %s (%ds)\n", h.Mac, usage.Mac)
+	message += fmt.Sprintf("self-hosted runner: %s (%ds)\n", h.SelfHosted, usage.SelfHosted)
+
+	return message, nil
+}
+
+type GitHubActionsReporter struct {
+}
+
+func (p GitHubActionsReporter) Report(repo string, startDate string, endDate string, usage github.Usage) (string, error) {
+	h, err := usage.HumanReadable()
+	if err != nil {
+		return "", err
 	}
 
 	message := "### GitHub Action Usage  \n"
@@ -67,9 +88,5 @@ func (p GitHubActionsPrinter) Print(repo string, startDate string, endDate strin
 		usage.SelfHosted,
 	)
 
-	_, err = fmt.Fprint(f, message)
-	if err != nil {
-		return err
-	}
-	return nil
+	return message, nil
 }

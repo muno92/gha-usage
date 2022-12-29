@@ -1,14 +1,17 @@
 package cmd
 
 import (
+	"bytes"
 	"errors"
+	"fmt"
 	"ghausage/github"
+	"log"
 	"os"
 	"testing"
 	"time"
 )
 
-func TestRun(t *testing.T) {
+func TestSumUsage(t *testing.T) {
 	token := os.Getenv("GITHUB_TOKEN")
 
 	tests := []struct {
@@ -55,7 +58,7 @@ func TestRun(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			usage, err := Run(tt.repo, tt.startDate, tt.endDate, token)
+			usage, err := SumUsage(tt.repo, tt.startDate, tt.endDate, token, log.Default())
 
 			errorExists := err != nil
 			if tt.expectedErrorExists != errorExists {
@@ -140,6 +143,84 @@ func TestIsRunnable(t *testing.T) {
 
 			if err.Error() != tt.expectedError.Error() {
 				t.Errorf("\nExpected error is \n\t%v,\ngot \n\t%v", tt.expectedError, err)
+			}
+		})
+	}
+}
+
+func TestSumCommand(t *testing.T) {
+	token := os.Getenv("GITHUB_TOKEN")
+
+	tests := []struct {
+		name                string
+		repo                string
+		startDate           string
+		endDate             string
+		expectedErrorExists bool
+		expectedUsage       github.Usage
+	}{
+		{
+			name:                "workflow run count is less than 100",
+			repo:                "muno92/resharper_inspectcode",
+			startDate:           "2022-01-01",
+			endDate:             "2022-01-31",
+			expectedErrorExists: false,
+			expectedUsage: github.Usage{
+				Linux:   7369,
+				Windows: 14430,
+				Mac:     8211,
+			},
+		},
+		{
+			name:                "workflow run count is between 100 and 1000",
+			repo:                "muno92/life_log",
+			startDate:           "2022-03-01",
+			endDate:             "2022-03-05",
+			expectedErrorExists: false,
+			expectedUsage: github.Usage{
+				Linux:   3262,
+				Windows: 0,
+				Mac:     0,
+			},
+		},
+		{
+			name:                "workflow run count is more than 1000",
+			repo:                "muno92/life_log",
+			startDate:           "2022-03-01",
+			endDate:             "2022-03-15",
+			expectedErrorExists: true,
+			expectedUsage:       github.Usage{},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			stdout := new(bytes.Buffer)
+
+			t.Setenv("GITHUB_ACTIONS", "false")
+
+			err := SumCommand{Logger: log.Default()}.Run(stdout, tt.repo, tt.startDate, tt.endDate, token)
+			errorExists := err != nil
+			if tt.expectedErrorExists != errorExists {
+				t.Errorf("expected error exists is %v, got %v\n%v", tt.expectedErrorExists, errorExists, err)
+			}
+
+			if tt.expectedErrorExists {
+				return
+			}
+
+			h, _ := tt.expectedUsage.HumanReadable()
+
+			expected := fmt.Sprintf("%s (%s ~ %s) usage\n", tt.repo, tt.startDate, tt.endDate)
+			expected += fmt.Sprintf("Linux: %s (%ds)\n", h.Linux, tt.expectedUsage.Linux)
+			expected += fmt.Sprintf("Windows: %s (%ds)\n", h.Windows, tt.expectedUsage.Windows)
+			expected += fmt.Sprintf("Mac: %s (%ds)\n", h.Mac, tt.expectedUsage.Mac)
+			expected += fmt.Sprintf("self-hosted runner: %s (%ds)\n", h.SelfHosted, tt.expectedUsage.SelfHosted)
+
+			actual := stdout.String()
+
+			if actual != expected {
+				t.Errorf("Expected message is\n\t%v,\ngot\n\t%v", expected, actual)
 			}
 		})
 	}

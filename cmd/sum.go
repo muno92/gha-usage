@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"ghausage/config"
 	"ghausage/github"
+	"io"
+	"log"
 	"math"
 	"time"
 )
@@ -13,13 +15,36 @@ type WorkflowRunResult struct {
 	Error        error
 }
 
-func Run(repo string, startDate string, endDate string, token string) (github.Usage, error) {
+type SumCommand struct {
+	Logger *log.Logger
+}
+
+func (s SumCommand) Run(stdout io.Writer, repo string, startDate string, endDate string, token string) error {
+	usage, err := SumUsage(repo, startDate, endDate, token, s.Logger)
+	if err != nil {
+		return err
+	}
+
+	printer, err := NewPrinter(stdout)
+	if err != nil {
+		return err
+	}
+
+	err = printer.Print(repo, startDate, endDate, usage)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func SumUsage(repo string, startDate string, endDate string, token string, logger *log.Logger) (github.Usage, error) {
 	targetRange, err := github.NewRange(startDate, endDate)
 	if err != nil {
 		return github.Usage{}, err
 	}
 
-	client := github.Client{Token: token}
+	client := github.Client{Token: token, Logger: logger}
 
 	workflowRuns, err := github.FetchWorkflowRuns(repo, client, targetRange, config.PerPage, 1)
 	if err != nil {
@@ -36,13 +61,13 @@ func Run(repo string, startDate string, endDate string, token string) (github.Us
 		return github.Usage{}, err
 	}
 
-	fmt.Printf("Workflow run count: %d\n", workflowRuns.TotalCount)
+	logger.Printf("Workflow run count: %d\n", workflowRuns.TotalCount)
 
 	totalPage := TotalPage(workflowRuns)
 	allWorkflowRuns := make([]github.WorkflowRun, workflowRuns.TotalCount)
 	allWorkflowRuns = workflowRuns.WorkflowRuns
 
-	fmt.Printf("Complete fetch workflow run with pagination (1/%d)\n", totalPage)
+	logger.Printf("Complete fetch workflow run with pagination (1/%d)\n", totalPage)
 
 	// total_count is over 100
 	if totalPage > 1 {
@@ -65,7 +90,7 @@ func Run(repo string, startDate string, endDate string, token string) (github.Us
 			}
 
 			allWorkflowRuns = append(allWorkflowRuns, w.WorkflowRuns.WorkflowRuns...)
-			fmt.Printf("Complete fetch workflow run with pagination (%d/%d)\n", j, totalPage)
+			logger.Printf("Complete fetch workflow run with pagination (%d/%d)\n", j, totalPage)
 		}
 	}
 
@@ -90,7 +115,7 @@ func Run(repo string, startDate string, endDate string, token string) (github.Us
 
 		usage = usage.Plus(u.Usage)
 
-		fmt.Printf("Complete fetch job (%d/%d)\n", k+1, workflowRuns.TotalCount)
+		logger.Printf("Complete fetch job (%d/%d)\n", k+1, workflowRuns.TotalCount)
 	}
 
 	return usage, nil
