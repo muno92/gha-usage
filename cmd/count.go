@@ -18,7 +18,7 @@ func (c CountCommand) Run(stdout io.Writer, repo string, startDate string, endDa
 		return err
 	}
 
-	client := github.Client{Token: token, Logger: c.Logger}
+	client := github.NewClient(token, c.Logger)
 
 	w, err := github.FetchWorkflowRuns(repo, client, r, config.PerPage, 1)
 	if err != nil {

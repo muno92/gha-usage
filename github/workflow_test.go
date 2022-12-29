@@ -8,7 +8,7 @@ import (
 )
 
 func TestFetchWorkflowRuns(t *testing.T) {
-	client := Client{Token: os.Getenv("GITHUB_TOKEN"), Logger: log.Default()}
+	client := NewClient(os.Getenv("GITHUB_TOKEN"), log.Default())
 
 	tests := []struct {
 		name                     string
@@ -77,7 +77,7 @@ func TestFetchWorkflowRuns(t *testing.T) {
 }
 
 func TestWorkflowRunUsage(t *testing.T) {
-	client := Client{Token: os.Getenv("GITHUB_TOKEN"), Logger: log.Default()}
+	client := NewClient(os.Getenv("GITHUB_TOKEN"), log.Default())
 
 	tests := []struct {
 		name          string
