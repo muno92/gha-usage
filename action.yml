@@ -1,6 +1,10 @@
 name: 'GitHub Actions Usage Calculator'
 description: 'Calculating GitHub Actions processing time'
 inputs:
+  sub-command:
+    description: 'Subcommand of ghausage. [ sum | count ]'
+    required: false
+    default: 'sum'
   repo:
     description: 'repo-owner/repository-name'
     required: true
@@ -14,6 +18,7 @@ runs:
   using: docker
   image: Dockerfile
   args:
+    - ${{ inputs.sub-command }}
     - --repo
     - ${{ inputs.repo }}
     - --start

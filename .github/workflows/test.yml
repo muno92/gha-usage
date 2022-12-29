@@ -27,8 +27,18 @@ jobs:
         run: echo "START_DATE=$(date -d '8 days ago' +'%Y-%m-%d')" >> $GITHUB_ENV
       - name: Set End Date
         run: echo "END_DATE=$(date -d '1 days ago' +'%Y-%m-%d')" >> $GITHUB_ENV
-      - uses: ./
+      - name: Test Sum Command
+        uses: ./
         with:
+          repo: ${{ github.repository }}
+          start-date: ${{ env.START_DATE }}
+          end-date: ${{ env.END_DATE }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Test Count Command
+        uses: ./
+        with:
+          sub-command: count
           repo: ${{ github.repository }}
           start-date: ${{ env.START_DATE }}
           end-date: ${{ env.END_DATE }}

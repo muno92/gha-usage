@@ -31,6 +31,8 @@ From GitHub Actions, gha-usage output result to Job Summary.
 
 #### Inputs
 
+- sub-command  
+  Subcommand of ghausage. \[ sum | count ]
 - repo (**required**)  
   The name of target repository.  
   example) muno92/gha-usage
