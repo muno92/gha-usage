@@ -7,7 +7,7 @@ import (
 )
 
 func TestFetchRateLimit(t *testing.T) {
-	client := Client{Token: os.Getenv("GITHUB_TOKEN"), Logger: log.Default()}
+	client := NewClient(os.Getenv("GITHUB_TOKEN"), log.Default())
 
 	rateLimit, err := FetchRateLimit(client)
 

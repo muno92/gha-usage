@@ -44,7 +44,7 @@ func SumUsage(repo string, startDate string, endDate string, token string, logge
 		return github.Usage{}, err
 	}
 
-	client := github.Client{Token: token, Logger: logger}
+	client := github.NewClient(token, logger)
 
 	workflowRuns, err := github.FetchWorkflowRuns(repo, client, targetRange, config.PerPage, 1)
 	if err != nil {

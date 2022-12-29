@@ -10,22 +10,27 @@ import (
 )
 
 type Client struct {
-	Token  string
-	Logger *log.Logger
+	token  string
+	logger *log.Logger
+	client *http.Client
+}
+
+func NewClient(token string, logger *log.Logger) Client {
+	client := &http.Client{}
+
+	return Client{token, logger, client}
 }
 
 func (c Client) Get(url string) ([]byte, error) {
-	client := &http.Client{}
-
 	ctx := context.Background()
 	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
 	if err != nil {
 		return nil, err
 	}
 	req.Header.Add("User-Agent", "GitHub Actions Usage Calculator")
-	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.Token))
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.token))
 
-	resp, err := client.Do(req)
+	resp, err := c.client.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -35,7 +40,7 @@ func (c Client) Get(url string) ([]byte, error) {
 		if retryAfter != "" {
 			retryDuration, err := time.ParseDuration(retryAfter + "s")
 			if err == nil {
-				c.Logger.Printf("Retry after %v\n", retryDuration)
+				c.logger.Printf("Retry after %v\n", retryDuration)
 				time.Sleep(retryDuration)
 				return c.Get(url)
 			}
