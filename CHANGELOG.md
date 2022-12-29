@@ -9,4 +9,6 @@
 - Add count command by @muno92 in https://github.com/muno92/gha-usage/pull/16
 - Reuse HTTP connection by @muno92 in https://github.com/muno92/gha-usage/pull/17
 
+test
+
 ## [v0.1.0](https://github.com/muno92/gha-usage/commits/v0.1.0) - 2022-11-26
