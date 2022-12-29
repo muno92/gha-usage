@@ -1,5 +1,5 @@
 name: 'GitHub Actions Usage Calculator'
-description: 'Calculating GitHub Actions processing time'
+description: 'Calculate GitHub Actions usage with specified repository and period.'
 inputs:
   sub-command:
     description: 'Subcommand of ghausage. [ sum | count ]'
