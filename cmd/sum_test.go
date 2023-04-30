@@ -125,7 +125,7 @@ func TestIsRunnable(t *testing.T) {
 				Resources: github.Resource{
 					Core: github.RateLimit{
 						Remaining: tt.remainingRateLimit,
-						Reset:     resetTime.UnixMilli(),
+						Reset:     resetTime.Unix(),
 					},
 				},
 			}

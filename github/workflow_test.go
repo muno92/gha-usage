@@ -108,7 +108,7 @@ func TestWorkflowRunUsage(t *testing.T) {
 			name:    "job per workflow is over 100",
 			jobsUrl: "https://api.github.com/repos/phpstan/phpstan-src/actions/runs/3281861062/jobs",
 			expectedUsage: Usage{
-				Linux:      7135,
+				Linux:      7084,
 				Windows:    61,
 				Mac:        0,
 				SelfHosted: 0,
