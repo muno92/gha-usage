@@ -131,7 +131,7 @@ func IsRunnable(limits github.RateLimits, runs github.WorkflowRuns) (bool, error
 
 	return RateLimitIsEnough(limits, runs), fmt.Errorf(
 		"please try again at %s, because rate limit remaining (%d) is less than expected fetch count (%d)",
-		time.UnixMilli(limits.Resources.Core.Reset).In(time.UTC).Format(time.RFC3339),
+		time.Unix(limits.Resources.Core.Reset, 0).In(time.UTC).Format(time.RFC3339),
 		limits.Resources.Core.Remaining,
 		ExpectedFetchCount(runs),
 	)
