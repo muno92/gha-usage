@@ -27,3 +27,7 @@ jobs:
     if: needs.release.outputs.tagpr-tag != ''
     uses: ./.github/workflows/goreleaser.yml
     secrets: inherit
+  update-major-version:
+    needs: up-artifact-to-release
+    uses: ./.github/workflows/update_major_version.yml
+    secrets: inherit

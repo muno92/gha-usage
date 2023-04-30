@@ -1,9 +1,7 @@
 name: Update Major Version
 
 on:
-  push:
-    tags: 'v[0-9].[0-9]+.[0-9]+'
-  workflow_dispatch:
+  workflow_call:
 
 jobs:
   update-major-version:

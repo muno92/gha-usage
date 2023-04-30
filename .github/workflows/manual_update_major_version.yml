@@ -1,0 +1,7 @@
+name: Manual Update Major Version
+on: workflow_dispatch
+
+jobs:
+  update-major-version:
+    uses: ./.github/workflows/update_major_version.yml
+    secrets: inherit
