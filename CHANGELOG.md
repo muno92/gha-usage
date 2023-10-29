@@ -1,5 +1,8 @@
 # Changelog
 
+## [v1.0.2](https://github.com/muno92/gha-usage/compare/v1.0.1...v1.0.2) - 2023-10-29
+- Add macos-13 to the known labels by @JCWasmx86 in https://github.com/muno92/gha-usage/pull/23
+
 ## [v1.0.1](https://github.com/muno92/gha-usage/compare/v1...v1.0.1) - 2023-04-30
 - Fix retry time when rate limit exceeded by @muno92 in https://github.com/muno92/gha-usage/pull/21
 
