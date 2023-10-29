@@ -1,5 +1,7 @@
 # Changelog
 
+## [v1.0.3](https://github.com/muno92/gha-usage/compare/v1.0.2...v1.0.3) - 2023-10-29
+
 ## [v1.0.2](https://github.com/muno92/gha-usage/compare/v1.0.1...v1.0.2) - 2023-10-29
 - Add macos-13 to the known labels by @JCWasmx86 in https://github.com/muno92/gha-usage/pull/23
 
