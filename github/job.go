@@ -204,6 +204,9 @@ func IsMacRunner(label string) bool {
 	if label == "macos-latest" {
 		return true
 	}
+	if label == "macos-13" {
+		return true
+	}
 	if label == "macos-12" {
 		return true
 	}
